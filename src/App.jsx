@@ -10,6 +10,8 @@ import { AuthProvider } from "./AuthContext";
 import { useAuth } from "./AuthContext";
 import Registration from "./Registration";
 
+export const apiURL = "http://206.189.91.54/api/v1";
+
 export default function App() {
   return (
     <AuthProvider>
@@ -29,12 +31,19 @@ export default function App() {
 }
 
 function Dashboard() {
-  const { setIsLogin } = useAuth();
+  const { setIsLogin, accessData, setAccessData } = useAuth();
 
   return (
     <h1>
-      Welcome
-      <button onClick={() => setIsLogin(false)}>Logout</button>
+      Welcome, {accessData.uid}
+      <button
+        onClick={() => {
+          setIsLogin(false);
+          setAccessData(null);
+        }}
+      >
+        Logout
+      </button>
     </h1>
   );
 }

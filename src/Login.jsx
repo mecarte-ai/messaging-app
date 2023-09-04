@@ -2,11 +2,10 @@ import { useState } from "react";
 import { Navigate } from "react-router";
 import { useAuth } from "./AuthContext";
 import { Link } from "react-router-dom";
-
-const apiURL = "http://206.189.91.54";
+import { apiURL } from "./App";
 
 export default function Login() {
-  const { isLogin, setIsLogin } = useAuth();
+  const { isLogin, setIsLogin, setAccessData } = useAuth();
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -18,8 +17,8 @@ export default function Login() {
     width: "50%",
   };
 
-  async function handleLogin(username, password) {
-    const res = await fetch(`${apiURL}/api/v1/auth/sign_in`, {
+  async function handleLogin() {
+    const res = await fetch(`${apiURL}/auth/sign_in`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -38,6 +37,8 @@ export default function Login() {
     };
 
     console.log(accessToken);
+
+    setAccessData(accessToken);
     setIsLogin(true);
   }
 
