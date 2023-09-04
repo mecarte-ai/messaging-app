@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Navigate } from "react-router";
 import { useAuth } from "./AuthContext";
 
-const apiURL = "https://206.189.91.54";
+const apiURL = "http://206.189.91.54";
 
 export default function Login() {
   const { isLogin, setIsLogin } = useAuth();
