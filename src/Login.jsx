@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Navigate } from "react-router";
 
 const apiURL = "http://206.189.91.54";
 
@@ -44,7 +45,8 @@ export default function Login() {
   }
 
   if (isLogin) {
-    return <h1>Login Successful!</h1>;
+    console.log(<Navigate to="/dashboard/" />);
+    return <Navigate to="/dashboard/" />;
   }
 
   return (
