@@ -3,10 +3,9 @@ import { Navigate } from "react-router";
 
 const apiURL = "http://206.189.91.54";
 
-export default function Login() {
+export default function Login({ onLogin, isLogin }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [isLogin, setIsLogin] = useState(false);
 
   const formStyle = {
     display: "flex",
@@ -35,7 +34,7 @@ export default function Login() {
     };
 
     console.log(accessToken);
-    setIsLogin(true);
+    onLogin(true);
   }
 
   function handleSubmit(e) {
