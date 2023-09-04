@@ -44,7 +44,7 @@ export default function Login() {
   function handleSubmit(e) {
     e.preventDefault();
 
-    handleLogin(username, password);
+    handleLogin();
   }
 
   if (isLogin) {
