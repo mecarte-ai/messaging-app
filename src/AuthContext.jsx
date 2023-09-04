@@ -8,7 +8,11 @@ export function AuthProvider({ children }) {
   const [isLogin, setIsLogin] = useState(
     localStorage.getItem("isLogin") === "true"
   );
-  const [accessData, setAccessData] = useState(null);
+  const [accessData, setAccessData] = useState(
+    localStorage.getItem("token")
+      ? JSON.parse(localStorage.getItem("token"))
+      : null
+  );
 
   useEffect(() => {
     localStorage.setItem("token", JSON.stringify(accessData));
