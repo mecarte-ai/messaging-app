@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { Navigate } from "react-router";
+import { useAuth } from "./AuthContext";
 
 const apiURL = "http://206.189.91.54";
 
-export default function Login({ onLogin, isLogin }) {
+export default function Login() {
+  const { isLogin, setIsLogin } = useAuth();
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -34,7 +37,7 @@ export default function Login({ onLogin, isLogin }) {
     };
 
     console.log(accessToken);
-    onLogin(true);
+    setIsLogin(true);
   }
 
   function handleSubmit(e) {
@@ -52,7 +55,7 @@ export default function Login({ onLogin, isLogin }) {
       <form action="" style={formStyle} onSubmit={handleSubmit}>
         <label>Username: </label>
         <input
-          type="text"
+          type="email"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />

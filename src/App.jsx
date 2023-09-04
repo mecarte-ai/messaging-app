@@ -1,4 +1,3 @@
-import { useState } from "react";
 import Login from "./Login";
 import {
   BrowserRouter,
@@ -7,36 +6,44 @@ import {
   Navigate,
   Outlet,
 } from "react-router-dom";
+import { AuthProvider } from "./AuthContext";
+import { useAuth } from "./AuthContext";
 
 export default function App() {
-  const [isLogin, setIsLogin] = useState(false);
-
   return (
-    <BrowserRouter basename="/messaging-app">
-      <Routes>
-        <Route
-          path=""
-          element={<Login onLogin={setIsLogin} isLogin={isLogin} />}
-        />
-        <Route element={<ProtectedRoute isLogin={isLogin} />}>
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/test" element={<Test />} />
-        </Route>
-        <Route path="*" element={<h1>Page 404 not found</h1>} />
-      </Routes>
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter basename="/messaging-app">
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route element={<ProtectedRoute />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/test" element={<Test />} />
+          </Route>
+          <Route path="*" element={<h1>Page 404 not found</h1>} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 
 function Dashboard() {
-  return <h1>Welcome</h1>;
+  const { setIsLogin } = useAuth();
+
+  return (
+    <h1>
+      Welcome
+      <button onClick={() => setIsLogin(false)}>Logout</button>
+    </h1>
+  );
 }
 
 function Test() {
   return <h1>Test</h1>;
 }
 
-function ProtectedRoute({ isLogin }) {
+function ProtectedRoute() {
+  const { isLogin } = useAuth();
+
   if (!isLogin) {
     return <Navigate to="/" />;
   }
