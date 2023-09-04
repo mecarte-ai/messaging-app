@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { apiURL } from "./App";
 
 export default function Registration() {
   const [email, setEmail] = useState("");
@@ -12,8 +13,32 @@ export default function Registration() {
     gap: "0.5rem",
   };
 
-  function handleRegistration(e) {
+  async function handleRegistration(e) {
     e.preventDefault();
+
+    const newUser = {
+      email,
+      password,
+      password_confirmation: confirmPassword,
+    };
+
+    // console.log(newUser);
+
+    const res = await fetch(`${apiURL}/auth/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newUser),
+    });
+
+    if (res.ok) {
+      alert("successful registration!");
+    } else {
+      alert("not successful");
+    }
+
+    console.log(res);
   }
 
   return (
