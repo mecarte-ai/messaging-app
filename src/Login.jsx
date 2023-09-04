@@ -45,7 +45,6 @@ export default function Login() {
   }
 
   if (isLogin) {
-    console.log(<Navigate to="/dashboard/" />);
     return <Navigate to="/dashboard/" />;
   }
 
