@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Navigate } from "react-router";
 import { useAuth } from "./AuthContext";
+import { Link } from "react-router-dom";
 
 const apiURL = "http://206.189.91.54";
 
@@ -67,6 +68,7 @@ export default function Login() {
         />
         <button>Login</button>
       </form>
+      New User? <Link to="/register">Register here</Link>
     </div>
   );
 }

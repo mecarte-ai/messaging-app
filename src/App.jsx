@@ -8,6 +8,7 @@ import {
 } from "react-router-dom";
 import { AuthProvider } from "./AuthContext";
 import { useAuth } from "./AuthContext";
+import Registration from "./Registration";
 
 export default function App() {
   return (
@@ -15,6 +16,7 @@ export default function App() {
       <BrowserRouter basename="/messaging-app">
         <Routes>
           <Route path="/" element={<Login />} />
+          <Route path="/register" element={<Registration />} />
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/test" element={<Test />} />
