@@ -33,7 +33,8 @@ export default function App() {
 
 function Dashboard() {
   const { setIsLogin, accessData, setAccessData } = useAuth();
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState(null);
+  const [messages, setMessages] = useState(null);
 
   async function fetchUsers() {
     const response = await fetch(`${apiURL}/users`, {
@@ -48,6 +49,22 @@ function Dashboard() {
     return data;
   }
 
+  async function fetchMessages() {
+    const response = await fetch(
+      `${apiURL}/messages?receiver_id=54&receiver_class=User`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          ...accessData,
+        },
+      }
+    );
+
+    const data = await response.json();
+    return data;
+  }
+
   useEffect(() => {
     async function getUsers() {
       const fetchedUsers = await fetchUsers();
@@ -55,7 +72,13 @@ function Dashboard() {
       setUsers(filter);
     }
 
+    async function getMessages() {
+      const fetchedMessages = await fetchMessages();
+      setMessages(fetchedMessages);
+    }
+
     getUsers();
+    getMessages();
   }, []);
 
   return (
@@ -69,8 +92,70 @@ function Dashboard() {
       >
         Logout
       </button>
-      {users && users.map((user) => <p key={user.uid}>{user.uid}</p>)}
+      {users ? (
+        users.map((user) => (
+          <div key={user.uid}>
+            <p>{user.id}</p>
+            <div>Hello {user.uid}</div>
+            <SendMessageForm user={user} />
+          </div>
+        ))
+      ) : (
+        <h1>Loading users...</h1>
+      )}
+      <h1>Messages</h1>
+      {messages &&
+        messages.data.map((message) => (
+          <div key={message.id}>
+            <p>{message.sender.uid}</p>
+            <div>{message.body}</div>
+          </div>
+        ))}
     </div>
+  );
+}
+
+function SendMessageForm({ user }) {
+  const [message, setMessage] = useState("");
+  const { accessData } = useAuth();
+
+  async function handleSend(e, id) {
+    e.preventDefault();
+
+    const newMessage = {
+      receiver_id: id,
+      receiver_class: "User",
+      body: message,
+    };
+
+    console.log(newMessage);
+
+    const res = await fetch(`${apiURL}/messages`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...accessData,
+      },
+      body: JSON.stringify(newMessage),
+    });
+
+    console.log(accessData);
+
+    console.log(id);
+  }
+
+  return (
+    <form action="" onSubmit={(e) => handleSend(e, user.id)}>
+      <input
+        type="text"
+        name=""
+        id=""
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+      />
+      <button>Send message</button>
+      {message}
+    </form>
   );
 }
 

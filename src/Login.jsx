@@ -29,7 +29,12 @@ export default function Login() {
       }),
     });
 
-    let accessToken = {
+    const data = await res.json();
+
+    console.log(data);
+
+    let accessToken = await {
+      id: data.data.id,
       "access-token": res.headers.get("access-token"),
       client: res.headers.get("client"),
       expiry: res.headers.get("expiry"),
