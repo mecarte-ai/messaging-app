@@ -13,6 +13,7 @@ export function AuthProvider({ children }) {
       ? JSON.parse(localStorage.getItem("token"))
       : null
   );
+  const [users, setUsers] = useState(null);
 
   useEffect(() => {
     localStorage.setItem("token", JSON.stringify(accessData));

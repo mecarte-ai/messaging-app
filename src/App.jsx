@@ -34,6 +34,7 @@ export default function App() {
 function Dashboard() {
   const { setIsLogin, accessData, setAccessData } = useAuth();
   const [users, setUsers] = useState(null);
+  const [filteredUsers, setFilteredUsers] = useState(null);
   const [messages, setMessages] = useState(null);
 
   async function fetchUsers() {
@@ -51,7 +52,7 @@ function Dashboard() {
 
   async function fetchMessages() {
     const response = await fetch(
-      `${apiURL}/messages?receiver_id=54&receiver_class=User`,
+      `${apiURL}/messages?receiver_id=3701&receiver_class=User`,
       {
         method: "GET",
         headers: {
@@ -65,16 +66,15 @@ function Dashboard() {
     return data;
   }
 
+  async function getMessages() {
+    const fetchedMessages = await fetchMessages();
+    setMessages(fetchedMessages);
+  }
+
   useEffect(() => {
     async function getUsers() {
       const fetchedUsers = await fetchUsers();
-      const filter = await fetchedUsers.data.slice(0, 10);
-      setUsers(filter);
-    }
-
-    async function getMessages() {
-      const fetchedMessages = await fetchMessages();
-      setMessages(fetchedMessages);
+      setUsers(fetchedUsers.data);
     }
 
     getUsers();
@@ -92,25 +92,40 @@ function Dashboard() {
       >
         Logout
       </button>
-      {users ? (
-        users.map((user) => (
+      {users && <SearchUserForm users={users} onSearch={setFilteredUsers} />}
+      {filteredUsers &&
+        filteredUsers.map((user) => (
           <div key={user.uid}>
             <p>{user.id}</p>
             <div>Hello {user.uid}</div>
             <SendMessageForm user={user} />
           </div>
-        ))
-      ) : (
-        <h1>Loading users...</h1>
-      )}
-      <h1>Messages</h1>
+        ))}
+      <h1>Your Messages</h1>
       {messages &&
         messages.data.map((message) => (
           <div key={message.id}>
-            <p>{message.sender.uid}</p>
+            <p>From: {message.sender.uid}</p>
             <div>{message.body}</div>
           </div>
         ))}
+    </div>
+  );
+}
+
+function SearchUserForm({ onSearch, users }) {
+  function handleSearch(value) {
+    if (value === "") onSearch(null);
+
+    const filter = users.filter((user) => user.uid.includes(value));
+
+    onSearch(filter);
+  }
+
+  return (
+    <div className="">
+      <label htmlFor="">Search user: </label>
+      <input type="text" onChange={(e) => handleSearch(e.target.value)} />
     </div>
   );
 }
