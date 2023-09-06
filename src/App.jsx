@@ -33,8 +33,8 @@ export default function App() {
 
 function Dashboard() {
   const { setIsLogin, accessData, setAccessData } = useAuth();
-  const [users, setUsers] = useState(null);
-  const [filteredUsers, setFilteredUsers] = useState(null);
+  const [users, setUsers] = useState([]);
+  const [query, setQuery] = useState("");
   const [messages, setMessages] = useState(null);
 
   async function fetchUsers() {
@@ -92,15 +92,19 @@ function Dashboard() {
       >
         Logout
       </button>
-      {users && <SearchUserForm users={users} onSearch={setFilteredUsers} />}
-      {filteredUsers &&
-        filteredUsers.map((user) => (
-          <div key={user.uid}>
-            <p>{user.id}</p>
-            <div>Hello {user.uid}</div>
-            <SendMessageForm user={user} />
-          </div>
-        ))}
+      {users && <SearchUserForm onSearch={setQuery} query={query} />}
+      {query !== "" &&
+        users
+          .filter((user) =>
+            user.uid.toLowerCase().includes(query.toLowerCase())
+          )
+          .map((user) => (
+            <div key={user.uid}>
+              <p>{user.id}</p>
+              <div>Hello {user.uid}</div>
+              <SendMessageForm user={user} />
+            </div>
+          ))}
       <h1>Your Messages</h1>
       {messages &&
         messages.data.map((message) => (
@@ -113,19 +117,15 @@ function Dashboard() {
   );
 }
 
-function SearchUserForm({ onSearch, users }) {
-  function handleSearch(value) {
-    if (value === "") onSearch(null);
-
-    const filter = users.filter((user) => user.uid.includes(value));
-
-    onSearch(filter);
-  }
-
+function SearchUserForm({ query, onSearch }) {
   return (
     <div className="">
       <label htmlFor="">Search user: </label>
-      <input type="text" onChange={(e) => handleSearch(e.target.value)} />
+      <input
+        type="text"
+        value={query}
+        onChange={(e) => onSearch(e.target.value)}
+      />
     </div>
   );
 }
