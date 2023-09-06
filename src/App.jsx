@@ -35,7 +35,6 @@ function Dashboard() {
   const { setIsLogin, accessData, setAccessData } = useAuth();
   const [users, setUsers] = useState([]);
   const [query, setQuery] = useState("");
-  const [messages, setMessages] = useState(null);
 
   async function fetchUsers() {
     const response = await fetch(`${apiURL}/users`, {
@@ -50,27 +49,6 @@ function Dashboard() {
     return data;
   }
 
-  async function fetchMessages() {
-    const response = await fetch(
-      `${apiURL}/messages?receiver_id=3701&receiver_class=User`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          ...accessData,
-        },
-      }
-    );
-
-    const data = await response.json();
-    return data;
-  }
-
-  async function getMessages() {
-    const fetchedMessages = await fetchMessages();
-    setMessages(fetchedMessages);
-  }
-
   useEffect(() => {
     async function getUsers() {
       const fetchedUsers = await fetchUsers();
@@ -78,7 +56,6 @@ function Dashboard() {
     }
 
     getUsers();
-    getMessages();
   }, []);
 
   return (
@@ -103,15 +80,65 @@ function Dashboard() {
               <p>{user.id}</p>
               <div>Hello {user.uid}</div>
               <SendMessageForm user={user} />
+              <MessageBox userID={user.id} />
             </div>
           ))}
-      <h1>Your Messages</h1>
+    </div>
+  );
+}
+
+function MessageBox({ userID }) {
+  const [showMessage, setShowMessage] = useState(false);
+
+  return (
+    <>
+      <button onClick={() => setShowMessage(!showMessage)}>View Message</button>
+      {showMessage && <Messages userID={userID} />}
+      {/* {messages && messages.data.map((message) => <p>message.body</p>)} */}
+    </>
+  );
+}
+
+function Messages({ userID }) {
+  const [messages, setMessages] = useState([]);
+  const { accessData } = useAuth();
+
+  async function fetchMessages(id) {
+    const response = await fetch(
+      `${apiURL}/messages?receiver_id=${id}&receiver_class=User`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          ...accessData,
+        },
+      }
+    );
+
+    const data = await response.json();
+    return data;
+  }
+
+  useEffect(() => {
+    async function getMessages() {
+      const msgs = await fetchMessages(userID);
+      setMessages(msgs.data);
+    }
+
+    getMessages();
+  }, []);
+
+  return (
+    <div className="">
+      <h1>Messages for {userID}</h1>
       {messages &&
-        messages.data.map((message) => (
-          <div key={message.id}>
-            <p>From: {message.sender.uid}</p>
-            <div>{message.body}</div>
-          </div>
+        messages.map((msg) => (
+          <p
+            key={msg.id}
+            style={msg.sender.id === accessData.id ? { color: "red" } : {}}
+          >
+            {msg.body}
+          </p>
         ))}
     </div>
   );
