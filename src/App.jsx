@@ -119,13 +119,17 @@ function Messages({ userID }) {
     return data;
   }
 
-  useEffect(() => {
-    async function getMessages() {
-      const msgs = await fetchMessages(userID);
-      setMessages(msgs.data);
-    }
+  async function getMessages() {
+    const msgs = await fetchMessages(userID);
+    setMessages(msgs.data);
+  }
 
+  useEffect(() => {
     getMessages();
+
+    const intervalId = setInterval(getMessages, 1000);
+
+    return () => clearInterval(intervalId);
   }, []);
 
   return (
