@@ -29,6 +29,11 @@ export default function Login() {
       }),
     });
 
+    if (!res.ok) {
+      alert("Login not successful!");
+      return;
+    }
+
     const data = await res.json();
 
     console.log(data);

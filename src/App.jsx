@@ -58,6 +58,10 @@ function Dashboard() {
     getUsers();
   }, []);
 
+  const filteredUsers = users.filter((user) =>
+    user.uid.toLowerCase().includes(query.toLowerCase())
+  );
+
   return (
     <div>
       Welcome, {accessData.uid}
@@ -70,19 +74,18 @@ function Dashboard() {
         Logout
       </button>
       {users && <SearchUserForm onSearch={setQuery} query={query} />}
-      {query !== "" &&
-        users
-          .filter((user) =>
-            user.uid.toLowerCase().includes(query.toLowerCase())
-          )
-          .map((user) => (
-            <div key={user.uid}>
-              <p>{user.id}</p>
-              <div>Hello {user.uid}</div>
-              <SendMessageForm user={user} />
-              <MessageBox userID={user.id} />
-            </div>
-          ))}
+      {filteredUsers.length < 75 ? (
+        filteredUsers.map((user) => (
+          <div key={user.uid}>
+            <p>{user.id}</p>
+            <div>Hello {user.uid}</div>
+            <SendMessageForm user={user} />
+            <MessageBox userID={user.id} />
+          </div>
+        ))
+      ) : (
+        <h1>Too many results {filteredUsers.length}</h1>
+      )}
     </div>
   );
 }
