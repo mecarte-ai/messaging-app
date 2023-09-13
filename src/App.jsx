@@ -35,6 +35,7 @@ function Dashboard() {
   const { setIsLogin, accessData, setAccessData } = useAuth();
   const [users, setUsers] = useState([]);
   const [query, setQuery] = useState("");
+  const [showAddChannel, setShowAddChannel] = useState(false);
 
   async function fetchUsers() {
     const response = await fetch(`${apiURL}/users`, {
@@ -62,31 +63,90 @@ function Dashboard() {
     user.uid.toLowerCase().includes(query.toLowerCase())
   );
 
+  function handleShowAddChannel() {
+    setShowAddChannel((show) => !show);
+  }
+
   return (
-    <div>
-      Welcome, {accessData.uid}
-      <button
-        onClick={() => {
-          setIsLogin(false);
-          setAccessData(null);
-        }}
-      >
-        Logout
-      </button>
-      {users && <SearchUserForm onSearch={setQuery} query={query} />}
-      {filteredUsers.length < 75 ? (
-        filteredUsers.map((user) => (
-          <div key={user.uid}>
-            <p>{user.id}</p>
-            <div>Hello {user.uid}</div>
-            <SendMessageForm user={user} />
-            <MessageBox userID={user.id} />
-          </div>
-        ))
-      ) : (
-        <h1>Too many results {filteredUsers.length}</h1>
-      )}
+    <div style={{ display: "flex" }}>
+      <div style={{ backgroundColor: "red" }}>
+        Welcome, {accessData.uid}
+        <button
+          onClick={() => {
+            setIsLogin(false);
+            setAccessData(null);
+          }}
+        >
+          Logout
+        </button>
+        {users && <SearchUserForm onSearch={setQuery} query={query} />}
+        {query.length > 3 ? (
+          filteredUsers.length < 75 ? (
+            filteredUsers.map((user) => (
+              <div key={user.uid}>
+                <p>{user.id}</p>
+                <div>Hello {user.uid}</div>
+                <SendMessageForm user={user} />
+                <MessageBox userID={user.id} />
+              </div>
+            ))
+          ) : (
+            <h1>Too many results {filteredUsers.length}</h1>
+          )
+        ) : (
+          <h1>Search a user</h1>
+        )}
+      </div>
+      <div style={{ backgroundColor: "green" }}>
+        <button onClick={handleShowAddChannel}>
+          {!showAddChannel ? "Add Channel" : "Close"}
+        </button>
+        {showAddChannel && <AddChannelForm users={users} />}
+      </div>
     </div>
+  );
+}
+
+function AddChannelForm({ users }) {
+  const [channelName, setChannelName] = useState("");
+  const [query, setQuery] = useState("");
+  const [selectedUsers, setSelectedUsers] = useState([]);
+
+  const filteredUsers = users.filter((user) =>
+    selectedUsers.includes(user.id) ? null : user
+  );
+
+  function handleAddUser(id) {
+    setSelectedUsers((users) => [...users, id]);
+  }
+
+  useEffect(() => {
+    console.log(selectedUsers);
+  }, [selectedUsers]);
+
+  return (
+    <form>
+      <h1>Create a channel</h1>
+      <input
+        type="text"
+        value={channelName}
+        onChange={(e) => setChannelName(e.target.value)}
+        placeholder="Channel name"
+      />
+      <br />
+      <input
+        type="text"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder="Search a user"
+      />
+      {filteredUsers.slice(0, 10).map((user) => (
+        <p key={user.id}>
+          {user.uid}
+          <button onClick={() => handleAddUser(user.id)}>Add User</button>
+        </p>
+      ))}
+    </form>
   );
 }
 
