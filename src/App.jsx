@@ -68,7 +68,7 @@ function Dashboard() {
 
   return (
     <div style={{ display: "flex" }}>
-      <div style={{ backgroundColor: "red" }}>
+      <div style={{ backgroundColor: "yellow" }}>
         Welcome, {accessData.uid}
         <button
           onClick={() => {
@@ -100,7 +100,9 @@ function Dashboard() {
         <button onClick={handleShowAddChannel}>
           {!showAddChannel ? "Add Channel" : "Close"}
         </button>
-        {showAddChannel && <AddChannelForm users={users} />}
+        {showAddChannel && (
+          <AddChannelForm users={users} onShowChannel={setShowAddChannel} />
+        )}
         <Channels />
       </div>
     </div>
@@ -111,7 +113,7 @@ function Channels() {
   const [channels, setChannels] = useState([]);
   const { accessData } = useAuth();
 
-  async function getChannels() {
+  async function fetchChannels() {
     const response = await fetch(`${apiURL}/channels`, {
       method: "get",
       headers: {
@@ -125,28 +127,32 @@ function Channels() {
   }
 
   useEffect(() => {
-    async function fetchChannels() {
-      const fetchedChannels = await getChannels();
+    async function getChannels() {
+      const fetchedChannels = await fetchChannels();
       setChannels(fetchedChannels.data);
     }
 
-    fetchChannels();
+    const fetchInterval = setInterval(getChannels, 5000);
+
+    return () => {
+      clearInterval(fetchInterval);
+    };
   }, []);
 
   return (
     <div>
       <h1>User Channels</h1>
-      {channels.map((channel) => {
-        <h1>{channel.name}</h1>;
-      })}
+      {channels &&
+        channels.map((channel) => <h1 key={channel.id}>{channel.name}</h1>)}
     </div>
   );
 }
 
-function AddChannelForm({ users }) {
+function AddChannelForm({ users, onShowChannel }) {
   const [channelName, setChannelName] = useState("");
   const [query, setQuery] = useState("");
   const [selectedUsers, setSelectedUsers] = useState([]);
+  const { accessData } = useAuth();
 
   const filteredUsers = users.filter((user) =>
     selectedUsers.includes(user.id) ? null : user
@@ -173,8 +179,28 @@ function AddChannelForm({ users }) {
     console.log(selectedUsers);
   }, [selectedUsers]);
 
+  async function handleSubmit(e) {
+    e.preventDefault();
+
+    const res = await fetch(`${apiURL}/channels`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...accessData,
+      },
+      body: JSON.stringify({
+        name: channelName,
+        user_ids: selectedUsers,
+      }),
+    });
+
+    onShowChannel(false);
+
+    console.log("Submitted!");
+  }
+
   return (
-    <form>
+    <form onSubmit={(e) => handleSubmit(e)}>
       <h1>Create a channel</h1>
       <input
         type="text"
