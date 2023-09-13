@@ -116,8 +116,21 @@ function AddChannelForm({ users }) {
     selectedUsers.includes(user.id) ? null : user
   );
 
+  const addedUsers = users.filter((user) =>
+    selectedUsers.includes(user.id) ? user : null
+  );
+
+  const queryUsers = filteredUsers.filter((user) =>
+    user.uid.toLowerCase().includes(query.toLowerCase())
+  );
+
   function handleAddUser(id) {
     setSelectedUsers((users) => [...users, id]);
+    setQuery("");
+  }
+
+  function handleRemoveUser(id) {
+    setSelectedUsers((users) => users.filter((user) => user !== id));
   }
 
   useEffect(() => {
@@ -134,18 +147,34 @@ function AddChannelForm({ users }) {
         placeholder="Channel name"
       />
       <br />
+      <h1>Added Users</h1>
+      {addedUsers.map((user) => (
+        <p key={user.id}>
+          {user.uid}
+          <button onClick={() => handleRemoveUser(user.id)}>Remove</button>
+        </p>
+      ))}
       <input
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Search a user"
       />
-      {filteredUsers.slice(0, 10).map((user) => (
-        <p key={user.id}>
-          {user.uid}
-          <button onClick={() => handleAddUser(user.id)}>Add User</button>
-        </p>
-      ))}
+      <div
+        style={{ maxHeight: "300px", overflow: "scroll", overflowX: "hidden" }}
+      >
+        {query.length > 3 ? (
+          queryUsers.map((user) => (
+            <p key={user.id}>
+              {user.uid}
+              <button onClick={() => handleAddUser(user.id)}>Add User</button>
+            </p>
+          ))
+        ) : (
+          <h1>Type to search</h1>
+        )}
+      </div>
+      <button>Submit</button>
     </form>
   );
 }
