@@ -1,0 +1,7 @@
+.box {
+  cursor: pointer;
+}
+
+.box:hover {
+  filter: brightness(85%);
+}
