@@ -101,7 +101,44 @@ function Dashboard() {
           {!showAddChannel ? "Add Channel" : "Close"}
         </button>
         {showAddChannel && <AddChannelForm users={users} />}
+        <Channels />
       </div>
+    </div>
+  );
+}
+
+function Channels() {
+  const [channels, setChannels] = useState([]);
+  const { accessData } = useAuth();
+
+  async function getChannels() {
+    const response = await fetch(`${apiURL}/channels`, {
+      method: "get",
+      headers: {
+        "Content-Type": "application/json",
+        ...accessData,
+      },
+    });
+
+    const data = await response.json();
+    return data;
+  }
+
+  useEffect(() => {
+    async function fetchChannels() {
+      const fetchedChannels = await getChannels();
+      setChannels(fetchedChannels.data);
+    }
+
+    fetchChannels();
+  }, []);
+
+  return (
+    <div>
+      <h1>User Channels</h1>
+      {channels.map((channel) => {
+        <h1>{channel.name}</h1>;
+      })}
     </div>
   );
 }
