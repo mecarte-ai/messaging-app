@@ -39,6 +39,7 @@ function Dashboard() {
   const [selectedUser, setSelectedUser] = useState(null);
   const [selectedUserName, setSelectedUserName] = useState(null);
   const [selectedChannel, setSelectedChannel] = useState(null);
+  const [selectedChannelName, setSelectedChannelName] = useState(null);
 
   async function fetchUsers() {
     const response = await fetch(`${apiURL}/users`, {
@@ -75,11 +76,13 @@ function Dashboard() {
     setSelectedUserName((prev) => (prev === name ? null : name));
     if (selectedChannel) {
       setSelectedChannel(null);
+      setSelectedChannelName(null);
     }
   }
 
-  function handleChannelClick(channel) {
-    setSelectedChannel((prev) => (prev === channel ? null : channel));
+  function handleChannelClick(id, name) {
+    setSelectedChannel((prev) => (prev === id ? null : id));
+    setSelectedChannelName((prev) => (prev === name ? null : name));
     if (selectedUser) {
       setSelectedUser(null);
       setSelectedUserName(null);
@@ -138,7 +141,11 @@ function Dashboard() {
           />
         )}
         {selectedChannel && (
-          <ChannelMessageBox selectedChannel={selectedChannel} />
+          <ChannelMessageBox
+            selectedChannel={selectedChannel}
+            selectedChannelName={selectedChannelName}
+            setSelectedChannelName={selectedChannelName}
+          />
         )}
       </div>
     </div>
@@ -236,8 +243,95 @@ function UserSendMessageForm({ user }) {
   );
 }
 
-function ChannelMessageBox({ selectedChannel }) {
-  return <h1>Welcome to {selectedChannel}!</h1>;
+function ChannelMessageBox({ selectedChannel, selectedChannelName }) {
+  const { accessData } = useAuth();
+  const [messages, setMessages] = useState([]);
+
+  async function fetchMessages(id) {
+    const response = await fetch(
+      `${apiURL}/messages?receiver_id=${id}&receiver_class=Channel`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          ...accessData,
+        },
+      }
+    );
+
+    const data = await response.json();
+    setMessages(data.data);
+  }
+
+  const fetchMessagesPeriodically = () => {
+    fetchMessages(selectedChannel);
+  };
+
+  useEffect(() => {
+    fetchMessages(selectedChannel);
+
+    const intervalId = setInterval(fetchMessagesPeriodically, 1000);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [selectedChannel]);
+
+  return (
+    <div>
+      <h1>Hello {selectedChannelName}!</h1>
+      <h3>Messages</h3>
+      {messages &&
+        messages.map((message) => <p key={message.id}>{message.body}</p>)}
+      <ChannelSendMessageForm channel={selectedChannel} />
+    </div>
+  );
+}
+
+function ChannelSendMessageForm({ channel }) {
+  const [message, setMessage] = useState("");
+  const { accessData } = useAuth();
+
+  async function handleSend(e, id) {
+    e.preventDefault();
+
+    const newMessage = {
+      receiver_id: id,
+      receiver_class: "Channel",
+      body: message,
+    };
+
+    // console.log(newMessage);
+
+    const res = await fetch(`${apiURL}/messages`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...accessData,
+      },
+      body: JSON.stringify(newMessage),
+    });
+
+    setMessage("");
+
+    // console.log(accessData);
+
+    // console.log(id);
+  }
+
+  return (
+    <form action="" onSubmit={(e) => handleSend(e, channel)}>
+      <input
+        type="text"
+        name=""
+        id=""
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+      />
+      <button>Send message</button>
+      {message}
+    </form>
+  );
 }
 
 function Channels({ showAddChannel, setSelectedChannel }) {
@@ -287,7 +381,7 @@ function Channels({ showAddChannel, setSelectedChannel }) {
           channels.map((channel) => (
             <h1
               key={channel.id}
-              onClick={() => setSelectedChannel(channel.name)}
+              onClick={() => setSelectedChannel(channel.id, channel.name)}
               className="box"
             >
               {channel.name}
