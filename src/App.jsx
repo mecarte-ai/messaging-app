@@ -210,8 +210,6 @@ function UserSendMessageForm({ user }) {
       body: message,
     };
 
-    // console.log(newMessage);
-
     const res = await fetch(`${apiURL}/messages`, {
       method: "POST",
       headers: {
@@ -222,10 +220,6 @@ function UserSendMessageForm({ user }) {
     });
 
     setMessage("");
-
-    // console.log(accessData);
-
-    // console.log(id);
   }
 
   return (
@@ -238,7 +232,6 @@ function UserSendMessageForm({ user }) {
         onChange={(e) => setMessage(e.target.value)}
       />
       <button>Send message</button>
-      {message}
     </form>
   );
 }
@@ -282,7 +275,14 @@ function ChannelMessageBox({ selectedChannel, selectedChannelName }) {
       <h1>Hello {selectedChannelName}!</h1>
       <h3>Messages</h3>
       {messages &&
-        messages.map((message) => <p key={message.id}>{message.body}</p>)}
+        messages.map((message) => (
+          <p
+            key={message.id}
+            style={message.sender.id === accessData.id ? { color: "red" } : {}}
+          >
+            {message.body}
+          </p>
+        ))}
       <ChannelSendMessageForm channel={selectedChannel} />
     </div>
   );
@@ -301,8 +301,6 @@ function ChannelSendMessageForm({ channel }) {
       body: message,
     };
 
-    // console.log(newMessage);
-
     const res = await fetch(`${apiURL}/messages`, {
       method: "POST",
       headers: {
@@ -313,10 +311,6 @@ function ChannelSendMessageForm({ channel }) {
     });
 
     setMessage("");
-
-    // console.log(accessData);
-
-    // console.log(id);
   }
 
   return (
@@ -329,7 +323,6 @@ function ChannelSendMessageForm({ channel }) {
         onChange={(e) => setMessage(e.target.value)}
       />
       <button>Send message</button>
-      {message}
     </form>
   );
 }
