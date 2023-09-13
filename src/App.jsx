@@ -191,7 +191,16 @@ function UserMessageBox({ selectedUser, selectedUserName }) {
       <h1>Hello {selectedUserName}!</h1>
       <h3>Messages</h3>
       {messages &&
-        messages.map((message) => <p key={message.id}>{message.body}</p>)}
+        messages.map((message) => (
+          <p
+            key={message.id}
+            style={
+              message.sender.id === accessData.id ? { color: "white" } : {}
+            }
+          >
+            {message.body}
+          </p>
+        ))}
       <UserSendMessageForm user={selectedUser} />
     </div>
   );
@@ -278,7 +287,9 @@ function ChannelMessageBox({ selectedChannel, selectedChannelName }) {
         messages.map((message) => (
           <p
             key={message.id}
-            style={message.sender.id === accessData.id ? { color: "red" } : {}}
+            style={
+              message.sender.id === accessData.id ? { color: "white" } : {}
+            }
           >
             {message.body}
           </p>
@@ -490,67 +501,6 @@ function SearchUserForm({ query, onSearch }) {
     </div>
   );
 }
-
-// function MessageBox({ userID }) {
-//   const [showMessage, setShowMessage] = useState(false);
-
-//   return (
-//     <>
-//       <button onClick={() => setShowMessage(!showMessage)}>View Message</button>
-//       {showMessage && <Messages userID={userID} />}
-//       {/* {messages && messages.data.map((message) => <p>message.body</p>)} */}
-//     </>
-//   );
-// }
-
-// function Messages({ userID }) {
-//   const [messages, setMessages] = useState([]);
-//   const { accessData } = useAuth();
-
-//   async function fetchMessages(id) {
-//     const response = await fetch(
-//       `${apiURL}/messages?receiver_id=${id}&receiver_class=User`,
-//       {
-//         method: "GET",
-//         headers: {
-//           "Content-Type": "application/json",
-//           ...accessData,
-//         },
-//       }
-//     );
-
-//     const data = await response.json();
-//     return data;
-//   }
-
-//   async function getMessages() {
-//     const msgs = await fetchMessages(userID);
-//     setMessages(msgs.data);
-//   }
-
-//   useEffect(() => {
-//     getMessages();
-
-//     const intervalId = setInterval(getMessages, 1000);
-
-//     return () => clearInterval(intervalId);
-//   }, []);
-
-//   return (
-//     <div className="">
-//       <h1>Messages for {userID}</h1>
-//       {messages &&
-//         messages.map((msg) => (
-//           <p
-//             key={msg.id}
-//             style={msg.sender.id === accessData.id ? { color: "red" } : {}}
-//           >
-//             {msg.body}
-//           </p>
-//         ))}
-//     </div>
-//   );
-// }
 
 function ProtectedRoute() {
   const { isLogin } = useAuth();
