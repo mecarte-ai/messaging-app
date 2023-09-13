@@ -10,6 +10,7 @@ import { AuthProvider } from "./AuthContext";
 import { useAuth } from "./AuthContext";
 import Registration from "./Registration";
 import { useEffect, useState } from "react";
+import "./App.css";
 
 export const apiURL = "http://206.189.91.54/api/v1";
 
@@ -35,6 +36,10 @@ function Dashboard() {
   const [users, setUsers] = useState([]);
   const [query, setQuery] = useState("");
   const [showAddChannel, setShowAddChannel] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedUserName, setSelectedUserName] = useState(null);
+  const [selectedChannel, setSelectedChannel] = useState(null);
+  const [selectedChannelName, setSelectedChannelName] = useState(null);
 
   async function fetchUsers() {
     const response = await fetch(`${apiURL}/users`, {
@@ -66,6 +71,24 @@ function Dashboard() {
     setShowAddChannel((show) => !show);
   }
 
+  function handleUserClick(id, name) {
+    setSelectedUser((prev) => (prev === id ? null : id));
+    setSelectedUserName((prev) => (prev === name ? null : name));
+    if (selectedChannel) {
+      setSelectedChannel(null);
+      setSelectedChannelName(null);
+    }
+  }
+
+  function handleChannelClick(id, name) {
+    setSelectedChannel((prev) => (prev === id ? null : id));
+    setSelectedChannelName((prev) => (prev === name ? null : name));
+    if (selectedUser) {
+      setSelectedUser(null);
+      setSelectedUserName(null);
+    }
+  }
+
   return (
     <div style={{ display: "flex" }}>
       <div style={{ backgroundColor: "yellow" }}>
@@ -82,11 +105,13 @@ function Dashboard() {
         {query.length > 3 ? (
           filteredUsers.length < 75 ? (
             filteredUsers.map((user) => (
-              <div key={user.uid}>
+              <div
+                key={user.uid}
+                onClick={() => handleUserClick(user.id, user.uid)}
+                className="box"
+              >
                 <p>{user.id}</p>
                 <div>Hello {user.uid}</div>
-                <SendMessageForm user={user} />
-                <MessageBox userID={user.id} />
               </div>
             ))
           ) : (
@@ -103,17 +128,219 @@ function Dashboard() {
         {showAddChannel && (
           <AddChannelForm users={users} onShowChannel={setShowAddChannel} />
         )}
-        <Channels showAddChannel={showAddChannel} />
+        <Channels
+          showAddChannel={showAddChannel}
+          setSelectedChannel={handleChannelClick}
+        />
+      </div>
+      <div style={{ backgroundColor: "blue" }}>
+        {selectedUser && (
+          <UserMessageBox
+            selectedUser={selectedUser}
+            selectedUserName={selectedUserName}
+          />
+        )}
+        {selectedChannel && (
+          <ChannelMessageBox
+            selectedChannel={selectedChannel}
+            selectedChannelName={selectedChannelName}
+            setSelectedChannelName={selectedChannelName}
+          />
+        )}
       </div>
     </div>
   );
 }
 
-function Channels({ showAddChannel }) {
+function UserMessageBox({ selectedUser, selectedUserName }) {
+  const { accessData } = useAuth();
+  const [messages, setMessages] = useState([]);
+
+  async function fetchMessages(id) {
+    const response = await fetch(
+      `${apiURL}/messages?receiver_id=${id}&receiver_class=User`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          ...accessData,
+        },
+      }
+    );
+
+    const data = await response.json();
+    setMessages(data.data);
+  }
+
+  const fetchMessagesPeriodically = () => {
+    fetchMessages(selectedUser);
+  };
+
+  useEffect(() => {
+    fetchMessages(selectedUser);
+
+    const intervalId = setInterval(fetchMessagesPeriodically, 1000);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [selectedUser]);
+
+  return (
+    <div>
+      <h1>Hello {selectedUserName}!</h1>
+      <h3>Messages</h3>
+      {messages &&
+        messages.map((message) => (
+          <p
+            key={message.id}
+            style={
+              message.sender.id === accessData.id ? { color: "white" } : {}
+            }
+          >
+            {message.body}
+          </p>
+        ))}
+      <UserSendMessageForm user={selectedUser} />
+    </div>
+  );
+}
+
+function UserSendMessageForm({ user }) {
+  const [message, setMessage] = useState("");
+  const { accessData } = useAuth();
+
+  async function handleSend(e, id) {
+    e.preventDefault();
+
+    const newMessage = {
+      receiver_id: id,
+      receiver_class: "User",
+      body: message,
+    };
+
+    const res = await fetch(`${apiURL}/messages`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...accessData,
+      },
+      body: JSON.stringify(newMessage),
+    });
+
+    setMessage("");
+  }
+
+  return (
+    <form action="" onSubmit={(e) => handleSend(e, user)}>
+      <input
+        type="text"
+        name=""
+        id=""
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+      />
+      <button>Send message</button>
+    </form>
+  );
+}
+
+function ChannelMessageBox({ selectedChannel, selectedChannelName }) {
+  const { accessData } = useAuth();
+  const [messages, setMessages] = useState([]);
+
+  async function fetchMessages(id) {
+    const response = await fetch(
+      `${apiURL}/messages?receiver_id=${id}&receiver_class=Channel`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          ...accessData,
+        },
+      }
+    );
+
+    const data = await response.json();
+    setMessages(data.data);
+  }
+
+  const fetchMessagesPeriodically = () => {
+    fetchMessages(selectedChannel);
+  };
+
+  useEffect(() => {
+    fetchMessages(selectedChannel);
+
+    const intervalId = setInterval(fetchMessagesPeriodically, 1000);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [selectedChannel]);
+
+  return (
+    <div>
+      <h1>Hello {selectedChannelName}!</h1>
+      <h3>Messages</h3>
+      {messages &&
+        messages.map((message) => (
+          <p
+            key={message.id}
+            style={
+              message.sender.id === accessData.id ? { color: "white" } : {}
+            }
+          >
+            {message.body}
+          </p>
+        ))}
+      <ChannelSendMessageForm channel={selectedChannel} />
+    </div>
+  );
+}
+
+function ChannelSendMessageForm({ channel }) {
+  const [message, setMessage] = useState("");
+  const { accessData } = useAuth();
+
+  async function handleSend(e, id) {
+    e.preventDefault();
+
+    const newMessage = {
+      receiver_id: id,
+      receiver_class: "Channel",
+      body: message,
+    };
+
+    const res = await fetch(`${apiURL}/messages`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...accessData,
+      },
+      body: JSON.stringify(newMessage),
+    });
+
+    setMessage("");
+  }
+
+  return (
+    <form action="" onSubmit={(e) => handleSend(e, channel)}>
+      <input
+        type="text"
+        name=""
+        id=""
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+      />
+      <button>Send message</button>
+    </form>
+  );
+}
+
+function Channels({ showAddChannel, setSelectedChannel }) {
   const [channels, setChannels] = useState([]);
   const { accessData } = useAuth();
-  const [selectedChannelId, setSelectedChannelId] = useState(null);
-  const [channel, setChannel] = useState(null);
 
   async function fetchChannels() {
     const response = await fetch(`${apiURL}/channels`, {
@@ -137,51 +364,33 @@ function Channels({ showAddChannel }) {
     getChannels();
   }, [showAddChannel]);
 
-  async function fetchChannelDetails(id) {
-    const response = await fetch(`${apiURL}/channels/${id}`, {
-      method: "get",
-      headers: {
-        "Content-Type": "application/json",
-        ...accessData,
-      },
-    });
+  // async function fetchChannelDetails(id) {
+  //   const response = await fetch(`${apiURL}/channels/${id}`, {
+  //     method: "get",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //       ...accessData,
+  //     },
+  //   });
 
-    const data = await response.json();
-    return data;
-  }
-
-  useEffect(() => {
-    if (!selectedChannelId) {
-      return;
-    }
-
-    async function fetchChannel() {
-      const fetchedChannel = await fetchChannelDetails(selectedChannelId);
-      setChannel(fetchedChannel.data);
-    }
-
-    fetchChannel();
-  }, [selectedChannelId]);
+  //   const data = await response.json();
+  //   return data;
+  // }
 
   return (
-    <div
-      style={{ backgroundColor: "blue", display: "flex", flexDirection: "row" }}
-    >
+    <div style={{ display: "flex", flexDirection: "row" }}>
       <div>
         <h1>User Channels</h1>
         {channels &&
           channels.map((channel) => (
             <h1
               key={channel.id}
-              onClick={() => setSelectedChannelId(channel.id)}
+              onClick={() => setSelectedChannel(channel.id, channel.name)}
+              className="box"
             >
               {channel.name}
             </h1>
           ))}
-      </div>
-      <div style={{ backgroundColor: "yellow" }}>
-        <h1>Channel Details</h1>
-        {channel && channel.name}
       </div>
     </div>
   );
@@ -280,67 +489,6 @@ function AddChannelForm({ users, onShowChannel }) {
   );
 }
 
-function MessageBox({ userID }) {
-  const [showMessage, setShowMessage] = useState(false);
-
-  return (
-    <>
-      <button onClick={() => setShowMessage(!showMessage)}>View Message</button>
-      {showMessage && <Messages userID={userID} />}
-      {/* {messages && messages.data.map((message) => <p>message.body</p>)} */}
-    </>
-  );
-}
-
-function Messages({ userID }) {
-  const [messages, setMessages] = useState([]);
-  const { accessData } = useAuth();
-
-  async function fetchMessages(id) {
-    const response = await fetch(
-      `${apiURL}/messages?receiver_id=${id}&receiver_class=User`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          ...accessData,
-        },
-      }
-    );
-
-    const data = await response.json();
-    return data;
-  }
-
-  async function getMessages() {
-    const msgs = await fetchMessages(userID);
-    setMessages(msgs.data);
-  }
-
-  useEffect(() => {
-    getMessages();
-
-    const intervalId = setInterval(getMessages, 1000);
-
-    return () => clearInterval(intervalId);
-  }, []);
-
-  return (
-    <div className="">
-      <h1>Messages for {userID}</h1>
-      {messages &&
-        messages.map((msg) => (
-          <p
-            key={msg.id}
-            style={msg.sender.id === accessData.id ? { color: "red" } : {}}
-          >
-            {msg.body}
-          </p>
-        ))}
-    </div>
-  );
-}
-
 function SearchUserForm({ query, onSearch }) {
   return (
     <div className="">
@@ -351,50 +499,6 @@ function SearchUserForm({ query, onSearch }) {
         onChange={(e) => onSearch(e.target.value)}
       />
     </div>
-  );
-}
-
-function SendMessageForm({ user }) {
-  const [message, setMessage] = useState("");
-  const { accessData } = useAuth();
-
-  async function handleSend(e, id) {
-    e.preventDefault();
-
-    const newMessage = {
-      receiver_id: id,
-      receiver_class: "User",
-      body: message,
-    };
-
-    console.log(newMessage);
-
-    const res = await fetch(`${apiURL}/messages`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...accessData,
-      },
-      body: JSON.stringify(newMessage),
-    });
-
-    console.log(accessData);
-
-    console.log(id);
-  }
-
-  return (
-    <form action="" onSubmit={(e) => handleSend(e, user.id)}>
-      <input
-        type="text"
-        name=""
-        id=""
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-      />
-      <button>Send message</button>
-      {message}
-    </form>
   );
 }
 
