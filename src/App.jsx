@@ -22,7 +22,6 @@ export default function App() {
           <Route path="/register" element={<Registration />} />
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/test" element={<Test />} />
           </Route>
           <Route path="*" element={<h1>Page 404 not found</h1>} />
         </Routes>
@@ -295,10 +294,6 @@ function SendMessageForm({ user }) {
       {message}
     </form>
   );
-}
-
-function Test() {
-  return <h1>Test</h1>;
 }
 
 function ProtectedRoute() {
