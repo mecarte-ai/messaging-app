@@ -103,15 +103,17 @@ function Dashboard() {
         {showAddChannel && (
           <AddChannelForm users={users} onShowChannel={setShowAddChannel} />
         )}
-        <Channels />
+        <Channels showAddChannel={showAddChannel} />
       </div>
     </div>
   );
 }
 
-function Channels() {
+function Channels({ showAddChannel }) {
   const [channels, setChannels] = useState([]);
   const { accessData } = useAuth();
+  const [selectedChannelId, setSelectedChannelId] = useState(null);
+  const [channel, setChannel] = useState(null);
 
   async function fetchChannels() {
     const response = await fetch(`${apiURL}/channels`, {
@@ -132,18 +134,55 @@ function Channels() {
       setChannels(fetchedChannels.data);
     }
 
-    const fetchInterval = setInterval(getChannels, 5000);
+    getChannels();
+  }, [showAddChannel]);
 
-    return () => {
-      clearInterval(fetchInterval);
-    };
-  }, []);
+  async function fetchChannelDetails(id) {
+    const response = await fetch(`${apiURL}/channels/${id}`, {
+      method: "get",
+      headers: {
+        "Content-Type": "application/json",
+        ...accessData,
+      },
+    });
+
+    const data = await response.json();
+    return data;
+  }
+
+  useEffect(() => {
+    if (!selectedChannelId) {
+      return;
+    }
+
+    async function fetchChannel() {
+      const fetchedChannel = await fetchChannelDetails(selectedChannelId);
+      setChannel(fetchedChannel.data);
+    }
+
+    fetchChannel();
+  }, [selectedChannelId]);
 
   return (
-    <div>
-      <h1>User Channels</h1>
-      {channels &&
-        channels.map((channel) => <h1 key={channel.id}>{channel.name}</h1>)}
+    <div
+      style={{ backgroundColor: "blue", display: "flex", flexDirection: "row" }}
+    >
+      <div>
+        <h1>User Channels</h1>
+        {channels &&
+          channels.map((channel) => (
+            <h1
+              key={channel.id}
+              onClick={() => setSelectedChannelId(channel.id)}
+            >
+              {channel.name}
+            </h1>
+          ))}
+      </div>
+      <div style={{ backgroundColor: "yellow" }}>
+        <h1>Channel Details</h1>
+        {channel && channel.name}
+      </div>
     </div>
   );
 }
