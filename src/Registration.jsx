@@ -1,10 +1,13 @@
 import { useState } from "react";
 import { apiURL } from "./App";
+import { useNavigate } from "react-router-dom";
 
 export default function Registration() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
+  const navigate = useNavigate();
 
   const formStyle = {
     display: "flex",
@@ -34,6 +37,7 @@ export default function Registration() {
 
     if (res.ok) {
       alert("successful registration!");
+      navigate("/");
     } else {
       alert("not successful");
     }
@@ -49,7 +53,6 @@ export default function Registration() {
         <input
           type="text"
           name="email"
-          id=""
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
@@ -58,7 +61,6 @@ export default function Registration() {
         <input
           type="password"
           name="password"
-          id=""
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
@@ -67,7 +69,6 @@ export default function Registration() {
         <input
           type="password"
           name="confirmPassword"
-          id=""
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
         />
