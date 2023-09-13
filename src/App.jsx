@@ -37,6 +37,7 @@ function Dashboard() {
   const [query, setQuery] = useState("");
   const [showAddChannel, setShowAddChannel] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedUserName, setSelectedUserName] = useState(null);
   const [selectedChannel, setSelectedChannel] = useState(null);
 
   async function fetchUsers() {
@@ -69,8 +70,9 @@ function Dashboard() {
     setShowAddChannel((show) => !show);
   }
 
-  function handleUserClick(user) {
-    setSelectedUser((prev) => (prev === user ? null : user));
+  function handleUserClick(id, name) {
+    setSelectedUser((prev) => (prev === id ? null : id));
+    setSelectedUserName((prev) => (prev === name ? null : name));
     if (selectedChannel) {
       setSelectedChannel(null);
     }
@@ -80,6 +82,7 @@ function Dashboard() {
     setSelectedChannel((prev) => (prev === channel ? null : channel));
     if (selectedUser) {
       setSelectedUser(null);
+      setSelectedUserName(null);
     }
   }
 
@@ -101,13 +104,11 @@ function Dashboard() {
             filteredUsers.map((user) => (
               <div
                 key={user.uid}
-                onClick={() => handleUserClick(user.uid)}
+                onClick={() => handleUserClick(user.id, user.uid)}
                 className="box"
               >
                 <p>{user.id}</p>
                 <div>Hello {user.uid}</div>
-                {/* <SendMessageForm user={user} />
-                <MessageBox userID={user.id} /> */}
               </div>
             ))
           ) : (
@@ -130,7 +131,12 @@ function Dashboard() {
         />
       </div>
       <div style={{ backgroundColor: "blue" }}>
-        {selectedUser && <UserMessageBox selectedUser={selectedUser} />}
+        {selectedUser && (
+          <UserMessageBox
+            selectedUser={selectedUser}
+            selectedUserName={selectedUserName}
+          />
+        )}
         {selectedChannel && (
           <ChannelMessageBox selectedChannel={selectedChannel} />
         )}
@@ -139,8 +145,95 @@ function Dashboard() {
   );
 }
 
-function UserMessageBox({ selectedUser }) {
-  return <h1>Hello {selectedUser}!</h1>;
+function UserMessageBox({ selectedUser, selectedUserName }) {
+  const { accessData } = useAuth();
+  const [messages, setMessages] = useState([]);
+
+  async function fetchMessages(id) {
+    const response = await fetch(
+      `${apiURL}/messages?receiver_id=${id}&receiver_class=User`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          ...accessData,
+        },
+      }
+    );
+
+    const data = await response.json();
+    setMessages(data.data);
+  }
+
+  const fetchMessagesPeriodically = () => {
+    fetchMessages(selectedUser);
+  };
+
+  useEffect(() => {
+    fetchMessages(selectedUser);
+
+    const intervalId = setInterval(fetchMessagesPeriodically, 1000);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [selectedUser]);
+
+  return (
+    <div>
+      <h1>Hello {selectedUserName}!</h1>
+      <h3>Messages</h3>
+      {messages &&
+        messages.map((message) => <p key={message.id}>{message.body}</p>)}
+      <UserSendMessageForm user={selectedUser} />
+    </div>
+  );
+}
+
+function UserSendMessageForm({ user }) {
+  const [message, setMessage] = useState("");
+  const { accessData } = useAuth();
+
+  async function handleSend(e, id) {
+    e.preventDefault();
+
+    const newMessage = {
+      receiver_id: id,
+      receiver_class: "User",
+      body: message,
+    };
+
+    // console.log(newMessage);
+
+    const res = await fetch(`${apiURL}/messages`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...accessData,
+      },
+      body: JSON.stringify(newMessage),
+    });
+
+    setMessage("");
+
+    // console.log(accessData);
+
+    // console.log(id);
+  }
+
+  return (
+    <form action="" onSubmit={(e) => handleSend(e, user)}>
+      <input
+        type="text"
+        name=""
+        id=""
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+      />
+      <button>Send message</button>
+      {message}
+    </form>
+  );
 }
 
 function ChannelMessageBox({ selectedChannel }) {
@@ -369,50 +462,6 @@ function SearchUserForm({ query, onSearch }) {
 //           </p>
 //         ))}
 //     </div>
-//   );
-// }
-
-// function SendMessageForm({ user }) {
-//   const [message, setMessage] = useState("");
-//   const { accessData } = useAuth();
-
-//   async function handleSend(e, id) {
-//     e.preventDefault();
-
-//     const newMessage = {
-//       receiver_id: id,
-//       receiver_class: "User",
-//       body: message,
-//     };
-
-//     console.log(newMessage);
-
-//     const res = await fetch(`${apiURL}/messages`, {
-//       method: "POST",
-//       headers: {
-//         "Content-Type": "application/json",
-//         ...accessData,
-//       },
-//       body: JSON.stringify(newMessage),
-//     });
-
-//     console.log(accessData);
-
-//     console.log(id);
-//   }
-
-//   return (
-//     <form action="" onSubmit={(e) => handleSend(e, user.id)}>
-//       <input
-//         type="text"
-//         name=""
-//         id=""
-//         value={message}
-//         onChange={(e) => setMessage(e.target.value)}
-//       />
-//       <button>Send message</button>
-//       {message}
-//     </form>
 //   );
 // }
 

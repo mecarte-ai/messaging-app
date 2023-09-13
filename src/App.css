@@ -1,7 +1,9 @@
 .box {
   cursor: pointer;
+  background-color: inherit;
+  transition: background-color 1s;
 }
 
 .box:hover {
-  filter: brightness(85%);
+  background-color: rgb(145, 230, 0);
 }
