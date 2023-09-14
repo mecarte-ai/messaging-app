@@ -174,7 +174,7 @@ function ChannelDetails({ selectedChannel, users }) {
   );
 
   async function fetchChannelDetails(id) {
-    setLoading(true);
+    // setLoading(true);
     const response = await fetch(`${apiURL}/channels/${id}`, {
       method: "get",
       headers: {
@@ -185,12 +185,20 @@ function ChannelDetails({ selectedChannel, users }) {
 
     const data = await response.json();
     setChannelDetails(data);
-    setLoading(false);
+    // setLoading(false);
+  }
+
+  function fetchMessagesPeriodically() {
+    fetchChannelDetails(selectedChannel);
   }
 
   useEffect(() => {
-    fetchChannelDetails(selectedChannel);
-  }, [selectedChannel, showAddChannelMember]);
+    const intervalId = setInterval(fetchMessagesPeriodically, 1000);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [selectedChannel]);
 
   return (
     <div className="">
