@@ -190,7 +190,7 @@ function ChannelDetails({ selectedChannel, users }) {
 
   useEffect(() => {
     fetchChannelDetails(selectedChannel);
-  }, [selectedChannel]);
+  }, [selectedChannel, showAddChannelMember]);
 
   return (
     <div className="">
@@ -207,17 +207,32 @@ function ChannelDetails({ selectedChannel, users }) {
       <button onClick={() => setShowAddChannelMember((show) => !show)}>
         {showAddChannelMember ? "Close" : "Add member"}
       </button>
-      {showAddChannelMember && <AddChannelMember users={nonChannelUsers} />}
+      {showAddChannelMember && (
+        <AddChannelMember
+          users={nonChannelUsers}
+          setShowAddChannelMember={setShowAddChannelMember}
+        />
+      )}
     </div>
   );
 }
 
-function AddChannelMember({ users }) {
+function AddChannelMember({ users, setShowAddChannelMember }) {
   const [query, setQuery] = useState("");
 
   const filteredUsers = users.filter((user) =>
     user.uid.toLowerCase().includes(query.toLowerCase())
   );
+
+  function handleAddMember(uid) {
+    const confirmation = confirm(`Do you want to add ${uid} to the channel?`);
+
+    if (confirmation) {
+      setShowAddChannelMember(false);
+    } else {
+      return;
+    }
+  }
 
   return (
     <div className="">
@@ -229,9 +244,11 @@ function AddChannelMember({ users }) {
       />
       {query}
       {query.length > 3 &&
-        filteredUsers
-          .slice(0, 10)
-          .map((user) => <p key={user.id}>{user.uid}</p>)}
+        filteredUsers.slice(0, 10).map((user) => (
+          <p key={user.id} onClick={() => handleAddMember(user.uid)}>
+            {user.uid}
+          </p>
+        ))}
     </div>
   );
 }
