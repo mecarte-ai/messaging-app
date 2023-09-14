@@ -133,7 +133,7 @@ function Dashboard() {
           setSelectedChannel={handleChannelClick}
         />
       </div>
-      <div style={{ backgroundColor: "blue" }}>
+      <div>
         {selectedUser && (
           <UserMessageBox
             selectedUser={selectedUser}
@@ -141,13 +141,136 @@ function Dashboard() {
           />
         )}
         {selectedChannel && (
-          <ChannelMessageBox
-            selectedChannel={selectedChannel}
-            selectedChannelName={selectedChannelName}
-            setSelectedChannelName={selectedChannelName}
-          />
+          <div style={{ display: "flex", flexDirection: "row" }}>
+            <ChannelMessageBox
+              selectedChannel={selectedChannel}
+              selectedChannelName={selectedChannelName}
+              setSelectedChannelName={selectedChannelName}
+            />
+            <ChannelDetails selectedChannel={selectedChannel} users={users} />
+          </div>
         )}
       </div>
+    </div>
+  );
+}
+
+function ChannelDetails({ selectedChannel, users }) {
+  const { accessData } = useAuth();
+  const [channelDetails, setChannelDetails] = useState([]);
+  const [showAddChannelMember, setShowAddChannelMember] = useState(false);
+
+  const channelUsersId = channelDetails.data?.channel_members.map(
+    (user) => user.user_id
+  );
+
+  const channelUsers = users.filter((user) =>
+    channelUsersId?.includes(user.id)
+  );
+
+  const nonChannelUsers = users.filter(
+    (user) => !channelUsersId?.includes(user.id)
+  );
+
+  async function fetchChannelDetails(id) {
+    const response = await fetch(`${apiURL}/channels/${id}`, {
+      method: "get",
+      headers: {
+        "Content-Type": "application/json",
+        ...accessData,
+      },
+    });
+
+    const data = await response.json();
+    setChannelDetails(data);
+  }
+
+  function fetchMessagesPeriodically() {
+    fetchChannelDetails(selectedChannel);
+  }
+
+  useEffect(() => {
+    const intervalId = setInterval(fetchMessagesPeriodically, 1000);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [selectedChannel]);
+
+  return (
+    <div className="">
+      <h1>Channel Details</h1>
+      {loading ? (
+        "Loading..."
+      ) : (
+        <>
+          <h3>Channel members</h3>
+          {channelUsers &&
+            channelUsers.map((user) => <p key={user.id}>{user.uid}</p>)}
+        </>
+      )}
+      <button onClick={() => setShowAddChannelMember((show) => !show)}>
+        {showAddChannelMember ? "Close" : "Add member"}
+      </button>
+      {showAddChannelMember && (
+        <AddChannelMember
+          users={nonChannelUsers}
+          setShowAddChannelMember={setShowAddChannelMember}
+          selectedChannel={selectedChannel}
+        />
+      )}
+    </div>
+  );
+}
+
+function AddChannelMember({ users, setShowAddChannelMember, selectedChannel }) {
+  const [query, setQuery] = useState("");
+  const { accessData } = useAuth();
+
+  const filteredUsers = users.filter((user) =>
+    user.uid.toLowerCase().includes(query.toLowerCase())
+  );
+
+  async function fetchAddChannelMember(id) {
+    const res = await fetch(`${apiURL}/channel/add_member`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...accessData,
+      },
+      body: JSON.stringify({
+        id: selectedChannel,
+        member_id: id,
+      }),
+    });
+  }
+
+  function handleAddMember(uid, id) {
+    const confirmation = confirm(`Do you want to add ${uid} to the channel?`);
+
+    if (confirmation) {
+      fetchAddChannelMember(id);
+      setShowAddChannelMember(false);
+    } else {
+      return;
+    }
+  }
+
+  return (
+    <div className="">
+      <input
+        type="text"
+        placeholder="Search a user"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+      />
+      {query}
+      {query.length > 3 &&
+        filteredUsers.map((user) => (
+          <p key={user.id} onClick={() => handleAddMember(user.uid, user.id)}>
+            {user.uid}
+          </p>
+        ))}
     </div>
   );
 }
@@ -187,7 +310,7 @@ function UserMessageBox({ selectedUser, selectedUserName }) {
   }, [selectedUser]);
 
   return (
-    <div>
+    <div style={{ backgroundColor: "blue" }}>
       <h1>Hello {selectedUserName}!</h1>
       <h3>Messages</h3>
       {messages &&
@@ -280,8 +403,8 @@ function ChannelMessageBox({ selectedChannel, selectedChannelName }) {
   }, [selectedChannel]);
 
   return (
-    <div>
-      <h1>Hello {selectedChannelName}!</h1>
+    <div style={{ backgroundColor: "pink" }}>
+      <h1>Welcome to {selectedChannelName}!</h1>
       <h3>Messages</h3>
       {messages &&
         messages.map((message) => (
@@ -363,19 +486,6 @@ function Channels({ showAddChannel, setSelectedChannel }) {
 
     getChannels();
   }, [showAddChannel]);
-
-  // async function fetchChannelDetails(id) {
-  //   const response = await fetch(`${apiURL}/channels/${id}`, {
-  //     method: "get",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //       ...accessData,
-  //     },
-  //   });
-
-  //   const data = await response.json();
-  //   return data;
-  // }
 
   return (
     <div style={{ display: "flex", flexDirection: "row" }}>
