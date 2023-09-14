@@ -200,15 +200,13 @@ function ChannelDetails({ selectedChannel, users }) {
   return (
     <div className="">
       <h1>Channel Details</h1>
-      {loading ? (
-        "Loading..."
-      ) : (
+      {
         <>
           <h3>Channel members</h3>
           {channelUsers &&
             channelUsers.map((user) => <p key={user.id}>{user.uid}</p>)}
         </>
-      )}
+      }
       <button onClick={() => setShowAddChannelMember((show) => !show)}>
         {showAddChannelMember ? "Close" : "Add member"}
       </button>
