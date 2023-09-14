@@ -133,7 +133,7 @@ function Dashboard() {
           setSelectedChannel={handleChannelClick}
         />
       </div>
-      <div style={{ backgroundColor: "blue" }}>
+      <div>
         {selectedUser && (
           <UserMessageBox
             selectedUser={selectedUser}
@@ -141,13 +141,64 @@ function Dashboard() {
           />
         )}
         {selectedChannel && (
-          <ChannelMessageBox
-            selectedChannel={selectedChannel}
-            selectedChannelName={selectedChannelName}
-            setSelectedChannelName={selectedChannelName}
-          />
+          <div style={{ display: "flex", flexDirection: "row" }}>
+            <ChannelMessageBox
+              selectedChannel={selectedChannel}
+              selectedChannelName={selectedChannelName}
+              setSelectedChannelName={selectedChannelName}
+            />
+            <ChannelDetails selectedChannel={selectedChannel} users={users} />
+          </div>
         )}
       </div>
+    </div>
+  );
+}
+
+function ChannelDetails({ selectedChannel, users }) {
+  const { accessData } = useAuth();
+  const [channelDetails, setChannelDetails] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const channelUsersId = channelDetails.data?.channel_members.map(
+    (user) => user.user_id
+  );
+
+  const channelUsers = users.filter((user) =>
+    channelUsersId?.includes(user.id)
+  );
+
+  async function fetchChannelDetails(id) {
+    setLoading(true);
+    const response = await fetch(`${apiURL}/channels/${id}`, {
+      method: "get",
+      headers: {
+        "Content-Type": "application/json",
+        ...accessData,
+      },
+    });
+
+    const data = await response.json();
+    setChannelDetails(data);
+    setLoading(false);
+  }
+
+  useEffect(() => {
+    fetchChannelDetails(selectedChannel);
+  }, [selectedChannel]);
+
+  return (
+    <div className="">
+      <h1>Channel Details</h1>
+      {loading ? (
+        "Loading..."
+      ) : (
+        <>
+          <h1>Channel members</h1>
+          {channelUsers &&
+            channelUsers.map((user) => <p key={user.id}>{user.uid}</p>)}
+        </>
+      )}
     </div>
   );
 }
@@ -187,7 +238,7 @@ function UserMessageBox({ selectedUser, selectedUserName }) {
   }, [selectedUser]);
 
   return (
-    <div>
+    <div style={{ backgroundColor: "blue" }}>
       <h1>Hello {selectedUserName}!</h1>
       <h3>Messages</h3>
       {messages &&
@@ -280,8 +331,8 @@ function ChannelMessageBox({ selectedChannel, selectedChannelName }) {
   }, [selectedChannel]);
 
   return (
-    <div>
-      <h1>Hello {selectedChannelName}!</h1>
+    <div style={{ backgroundColor: "pink" }}>
+      <h1>Welcome to {selectedChannelName}!</h1>
       <h3>Messages</h3>
       {messages &&
         messages.map((message) => (
@@ -363,19 +414,6 @@ function Channels({ showAddChannel, setSelectedChannel }) {
 
     getChannels();
   }, [showAddChannel]);
-
-  // async function fetchChannelDetails(id) {
-  //   const response = await fetch(`${apiURL}/channels/${id}`, {
-  //     method: "get",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //       ...accessData,
-  //     },
-  //   });
-
-  //   const data = await response.json();
-  //   return data;
-  // }
 
   return (
     <div style={{ display: "flex", flexDirection: "row" }}>
