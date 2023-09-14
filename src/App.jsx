@@ -158,7 +158,6 @@ function Dashboard() {
 function ChannelDetails({ selectedChannel, users }) {
   const { accessData } = useAuth();
   const [channelDetails, setChannelDetails] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [showAddChannelMember, setShowAddChannelMember] = useState(false);
 
   const channelUsersId = channelDetails.data?.channel_members.map(
@@ -174,7 +173,6 @@ function ChannelDetails({ selectedChannel, users }) {
   );
 
   async function fetchChannelDetails(id) {
-    // setLoading(true);
     const response = await fetch(`${apiURL}/channels/${id}`, {
       method: "get",
       headers: {
@@ -185,7 +183,6 @@ function ChannelDetails({ selectedChannel, users }) {
 
     const data = await response.json();
     setChannelDetails(data);
-    // setLoading(false);
   }
 
   function fetchMessagesPeriodically() {
