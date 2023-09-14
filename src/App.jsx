@@ -159,6 +159,7 @@ function ChannelDetails({ selectedChannel, users }) {
   const { accessData } = useAuth();
   const [channelDetails, setChannelDetails] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [showAddChannelMember, setShowAddChannelMember] = useState(false);
 
   const channelUsersId = channelDetails.data?.channel_members.map(
     (user) => user.user_id
@@ -166,6 +167,10 @@ function ChannelDetails({ selectedChannel, users }) {
 
   const channelUsers = users.filter((user) =>
     channelUsersId?.includes(user.id)
+  );
+
+  const nonChannelUsers = users.filter(
+    (user) => !channelUsersId?.includes(user.id)
   );
 
   async function fetchChannelDetails(id) {
@@ -194,11 +199,39 @@ function ChannelDetails({ selectedChannel, users }) {
         "Loading..."
       ) : (
         <>
-          <h1>Channel members</h1>
+          <h3>Channel members</h3>
           {channelUsers &&
             channelUsers.map((user) => <p key={user.id}>{user.uid}</p>)}
         </>
       )}
+      <button onClick={() => setShowAddChannelMember((show) => !show)}>
+        {showAddChannelMember ? "Close" : "Add member"}
+      </button>
+      {showAddChannelMember && <AddChannelMember users={nonChannelUsers} />}
+    </div>
+  );
+}
+
+function AddChannelMember({ users }) {
+  const [query, setQuery] = useState("");
+
+  const filteredUsers = users.filter((user) =>
+    user.uid.toLowerCase().includes(query.toLowerCase())
+  );
+
+  return (
+    <div className="">
+      <input
+        type="text"
+        placeholder="Search a user"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+      />
+      {query}
+      {query.length > 3 &&
+        filteredUsers
+          .slice(0, 10)
+          .map((user) => <p key={user.id}>{user.uid}</p>)}
     </div>
   );
 }
