@@ -262,7 +262,6 @@ function AddChannelMember({ users, setShowAddChannelMember, selectedChannel }) {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       />
-      {query}
       {query.length > 3 &&
         filteredUsers.map((user) => (
           <p key={user.id} onClick={() => handleAddMember(user.uid, user.id)}>
@@ -319,6 +318,7 @@ function UserMessageBox({ selectedUser, selectedUserName }) {
               message.sender.id === accessData.id ? { color: "white" } : {}
             }
           >
+            {message.sender.id === accessData.id ? "You" : message.sender.uid}:{" "}
             {message.body}
           </p>
         ))}
@@ -412,7 +412,7 @@ function ChannelMessageBox({ selectedChannel, selectedChannelName }) {
               message.sender.id === accessData.id ? { color: "white" } : {}
             }
           >
-            {message.body}
+            {message.sender.uid}: {message.body}
           </p>
         ))}
       <ChannelSendMessageForm channel={selectedChannel} />
