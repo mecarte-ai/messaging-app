@@ -39,7 +39,7 @@ export function Channels({
   return (
     <div>
       <div>
-        <h1>User Channels</h1>
+        <h1>Your Channels</h1>
 
         {channels &&
           channels.map((channel) => (

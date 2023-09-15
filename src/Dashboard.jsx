@@ -136,7 +136,13 @@ export function Dashboard() {
         </div>
       </div>
 
-      <div className="bg-slate-400 ">
+      <div
+        className={
+          selected === "User"
+            ? "bg-slate-400"
+            : "bg-slate-400 grid grid-cols-[1fr_250px]"
+        }
+      >
         {selected === "User" && selectedUser && (
           <UserMessageBox
             selectedUser={selectedUser}
@@ -144,14 +150,14 @@ export function Dashboard() {
           />
         )}
         {selected === "Channels" && selectedChannel && (
-          <div>
+          <>
             <ChannelMessageBox
               selectedChannel={selectedChannel}
               selectedChannelName={selectedChannelName}
               setSelectedChannelName={selectedChannelName}
             />
             <ChannelDetails selectedChannel={selectedChannel} users={users} />
-          </div>
+          </>
         )}
       </div>
     </div>
