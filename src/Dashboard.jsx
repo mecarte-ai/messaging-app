@@ -151,6 +151,7 @@ export function Dashboard() {
       >
         {selected === "User" && selectedUser && (
           <UserMessageBox
+            key={selectedUser}
             selectedUser={selectedUser}
             selectedUserName={selectedUserName}
           />
@@ -158,6 +159,7 @@ export function Dashboard() {
         {selected === "Channels" && selectedChannel && (
           <>
             <ChannelMessageBox
+              key={selectedChannel}
               selectedChannel={selectedChannel}
               selectedChannelName={selectedChannelName}
               setSelectedChannelName={selectedChannelName}
