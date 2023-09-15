@@ -28,15 +28,19 @@ export function ChannelSendMessageForm({ channel }) {
   }
 
   return (
-    <form action="" onSubmit={(e) => handleSend(e, channel)}>
+    <form
+      onSubmit={(e) => handleSend(e, channel)}
+      className="mt-4 flex gap-2 p-5 py-0"
+    >
       <input
         type="text"
-        name=""
-        id=""
         value={message}
         onChange={(e) => setMessage(e.target.value)}
+        className="grow text-black px-2"
       />
-      <button>Send message</button>
+      <button className="px-2 bg-slate-500 rounded-md hover:bg-slate-600">
+        Send message
+      </button>
     </form>
   );
 }

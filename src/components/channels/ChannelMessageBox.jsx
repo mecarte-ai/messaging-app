@@ -8,6 +8,7 @@ export function ChannelMessageBox({ selectedChannel, selectedChannelName }) {
   const [messages, setMessages] = useState([]);
   const messageContainerRef = useRef(null);
   const dummy = useRef(null);
+  const [shouldAutoScroll, setShouldAutoScroll] = useState(true);
 
   async function fetchMessages(id) {
     const response = await fetch(
@@ -38,6 +39,33 @@ export function ChannelMessageBox({ selectedChannel, selectedChannelName }) {
       clearInterval(intervalId);
     };
   }, [selectedChannel]);
+
+  useEffect(() => {
+    if (shouldAutoScroll) {
+      dummy.current.scrollIntoView({ behavior: "auto" });
+    }
+  }, [messages, shouldAutoScroll]);
+
+  useEffect(() => {
+    const container = messageContainerRef.current;
+
+    function handleScroll() {
+      if (
+        container.scrollHeight - container.scrollTop ===
+        container.clientHeight
+      ) {
+        setShouldAutoScroll(true);
+      } else {
+        setShouldAutoScroll(false);
+      }
+    }
+
+    container.addEventListener("scroll", handleScroll);
+
+    return () => {
+      container.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   return (
     <div className="h-screen grid grid-rows-[auto_auto_1fr_auto] p-3">
