@@ -88,7 +88,9 @@ export function UserMessageBox({ selectedUser, selectedUserName }) {
                 <>
                   <span
                     className={`${
-                      message.body.length < 100 ? "rounded-full" : "rounded-sm"
+                      message.body.length < 100
+                        ? "rounded-full inline-block"
+                        : "rounded-2xl block"
                     } rounded-br-none bg-slate-500 p-2  text-right`}
                   >
                     {message.body}{" "}
@@ -102,7 +104,7 @@ export function UserMessageBox({ selectedUser, selectedUserName }) {
                   <p
                     className={`${
                       message.body.length < 100
-                        ? "rounded-full inline"
+                        ? "rounded-full inline-block"
                         : " rounded-2xl block"
                     } rounded-bl-none bg-slate-500 p-2  `}
                   >
