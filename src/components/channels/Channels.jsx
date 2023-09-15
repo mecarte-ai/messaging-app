@@ -32,13 +32,15 @@ export function Channels({
     getChannels();
   }, [showAddChannel]);
 
+  useEffect(() => {
+    setSelectedChannel(null);
+  }, []);
+
   return (
     <div>
       <div>
         <h1>User Channels</h1>
-        <button onClick={handleShowAddChannel}>
-          {!showAddChannel ? "Add Channel" : "Close"}
-        </button>
+
         {channels &&
           channels.map((channel) => (
             <h1
@@ -49,6 +51,9 @@ export function Channels({
               {channel.name}
             </h1>
           ))}
+        <button onClick={handleShowAddChannel}>
+          {!showAddChannel ? "Add Channel" : "Close"}
+        </button>
       </div>
     </div>
   );

@@ -1,15 +1,14 @@
 export function UsersList({ query, filteredUsers, handleUserClick }) {
   return (
-    <div className="">
+    <div className="flex gap-3 flex-col">
       {query.length > 3 ? (
         filteredUsers.length < 25 ? (
           filteredUsers.map((user) => (
             <div
               key={user.uid}
               onClick={() => handleUserClick(user.id, user.uid)}
-              className="box"
+              className="cursor-pointer hover:bg-slate-400"
             >
-              <p>{user.id}</p>
               <div>{user.uid}</div>
             </div>
           ))

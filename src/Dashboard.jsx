@@ -70,22 +70,32 @@ export function Dashboard() {
 
   return (
     <div className=" bg-slate-600 text-white grid grid-cols-[250px_1fr] h-screen">
-      <div className="bg-slate-500 h-screen grid grid-rows-[auto_auto_auto_1fr_auto] p-3  overflow-hidden">
+      <div className="bg-slate-500 h-screen grid grid-rows-[auto_auto_auto_1fr_auto] p-3 gap-3 overflow-hidden">
         <div>
           <span className=" text-xl text-center block font-bold">
             Welcome {accessData.uid}!
           </span>
         </div>
-        <div>
+        <div className="flex">
           <button
             onClick={() => setSelected("User")}
             disabled={selected === "User"}
+            className={
+              selected === "User"
+                ? "grow bg-slate-400"
+                : "px-3 hover:bg-slate-600"
+            }
           >
             Users
           </button>
           <button
             onClick={() => setSelected("Channels")}
             disabled={selected === "Channels"}
+            className={
+              selected === "Channels"
+                ? "grow bg-slate-400"
+                : "px-3 hover:bg-slate-600"
+            }
           >
             Channels
           </button>
@@ -93,7 +103,7 @@ export function Dashboard() {
         {selected === "User" ? (
           <>
             {users && <SearchUserForm onSearch={setQuery} query={query} />}
-            <div className="overflow-y-auto overflow-x-hidden py-3">
+            <div className="overflow-y-auto overflow-x-hidden">
               <UsersList
                 query={query}
                 filteredUsers={filteredUsers}
@@ -119,7 +129,7 @@ export function Dashboard() {
               setIsLogin(false);
               setAccessData(null);
             }}
-            className="block w-full"
+            className="block w-full bg-slate-800 hover:bg-slate-700"
           >
             Logout
           </button>
