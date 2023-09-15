@@ -46,10 +46,16 @@ export function ChannelDetails({ selectedChannel, users }) {
   }, [selectedChannel]);
 
   return (
-    <div className="">
-      <h3>Channel members</h3>
+    <div className="p-3 flex flex-col gap-3">
+      <h3 className="text-xl font-bold my-5">Channel members</h3>
       {channelUsers &&
-        channelUsers.map((user) => <p key={user.id}>{user.uid}</p>)}
+        channelUsers.map((user) => (
+          <p key={user.id}>
+            {user.uid}
+            {channelDetails.data?.owner_id === user.id ? " (Owner)" : ""}
+            {accessData.id === user.id ? " (You)" : ""}
+          </p>
+        ))}
       <button onClick={() => setShowAddChannelMember((show) => !show)}>
         {showAddChannelMember ? "Close" : "Add member"}
       </button>

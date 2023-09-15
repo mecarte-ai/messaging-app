@@ -70,7 +70,13 @@ export function Dashboard() {
 
   return (
     <div className=" bg-slate-600 text-white grid grid-cols-[250px_1fr] h-screen">
-      <div className="bg-slate-500 h-screen grid grid-rows-[auto_auto_auto_1fr_auto] p-3 gap-3 overflow-hidden">
+      <div
+        className={`bg-slate-500 h-screen grid ${
+          selected === "User"
+            ? "grid-rows-[auto_auto_auto_1fr_auto]"
+            : "grid-rows-[auto_auto_1fr_auto]"
+        } p-3 gap-3 overflow-hidden`}
+      >
         <div>
           <span className=" text-xl text-center block font-bold">
             Welcome {accessData.uid}!
@@ -112,7 +118,7 @@ export function Dashboard() {
             </div>
           </>
         ) : (
-          <div>
+          <div className="flex flex-col gap-3 overflow-y-auto overflow-x-hidden">
             <Channels
               showAddChannel={showAddChannel}
               setSelectedChannel={handleChannelClick}
