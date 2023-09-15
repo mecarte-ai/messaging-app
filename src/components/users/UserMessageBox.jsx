@@ -41,17 +41,30 @@ export function UserMessageBox({ selectedUser, selectedUserName }) {
     <div className="h-screen grid grid-rows-[auto_1fr_auto] p-3">
       <h1>{selectedUserName.toUpperCase()}</h1>
       <div className="">
-        <h3>Messages</h3>
+        <h3 className="text-center text-xl font-bold">Messages</h3>
         {messages &&
           messages.map((message) => (
             <p
               key={message.id}
-              style={
-                message.sender.id === accessData.id ? { color: "white" } : {}
+              className={
+                message.sender.id === accessData.id ? "text-right" : ""
               }
             >
-              {message.sender.id === accessData.id ? "You" : message.sender.uid}
-              : {message.body}
+              {message.sender.id === accessData.id ? (
+                <>
+                  {message.body}{" "}
+                  <span className="text-xs italic">
+                    {new Date(message.created_at).toLocaleTimeString()}
+                  </span>
+                </>
+              ) : (
+                <>
+                  <span className="text-xs italic">
+                    {new Date(message.created_at).toLocaleTimeString()}
+                  </span>{" "}
+                  {message.body}
+                </>
+              )}
             </p>
           ))}
       </div>

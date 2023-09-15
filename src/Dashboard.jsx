@@ -72,7 +72,7 @@ export function Dashboard() {
     <div className=" bg-slate-600 text-white grid grid-cols-[250px_1fr] h-screen">
       <div className="bg-slate-500 h-screen grid grid-rows-[auto_auto_auto_1fr_auto] p-3  overflow-hidden">
         <div>
-          <span className=" text-xl text-center block">
+          <span className=" text-xl text-center block font-bold">
             Welcome {accessData.uid}!
           </span>
         </div>
