@@ -46,7 +46,7 @@ export function ChannelDetails({ selectedChannel, users }) {
   }, [selectedChannel]);
 
   return (
-    <div className="p-3 flex flex-col gap-3">
+    <div className="p-3 flex flex-col gap-3 overflow-hidden">
       <h3 className="text-xl font-bold my-5">Channel members</h3>
       {channelUsers &&
         channelUsers.map((user) => (
@@ -56,7 +56,10 @@ export function ChannelDetails({ selectedChannel, users }) {
             {accessData.id === user.id ? " (You)" : ""}
           </p>
         ))}
-      <button onClick={() => setShowAddChannelMember((show) => !show)}>
+      <button
+        onClick={() => setShowAddChannelMember((show) => !show)}
+        className="bg-slate-500 hover:bg-slate-600"
+      >
         {showAddChannelMember ? "Close" : "Add member"}
       </button>
       {showAddChannelMember && (

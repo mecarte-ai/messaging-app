@@ -77,45 +77,49 @@ export function UserMessageBox({ selectedUser, selectedUserName }) {
         ref={messageContainerRef}
       >
         {messages &&
-          messages.map((message) => (
-            <div
-              key={message.id}
-              className={
-                message.sender.id === accessData.id ? "text-right" : ""
-              }
-            >
-              {message.sender.id === accessData.id ? (
-                <>
-                  <span
-                    className={`${
-                      message.body.length < 100
-                        ? "rounded-full inline-block"
-                        : "rounded-2xl block"
-                    } rounded-br-none bg-slate-500 p-2  text-right`}
-                  >
-                    {message.body}{" "}
-                  </span>
-                  <p className="text-xs italic ">
-                    {new Date(message.created_at).toLocaleTimeString()}
-                  </p>
-                </>
-              ) : (
-                <>
-                  <p
-                    className={`${
-                      message.body.length < 100
-                        ? "rounded-full inline-block"
-                        : " rounded-2xl block"
-                    } rounded-bl-none bg-slate-500 p-2  `}
-                  >
-                    {message.body}{" "}
-                  </p>
-                  <p className="text-xs italic">
-                    {new Date(message.created_at).toLocaleTimeString()}
-                  </p>{" "}
-                </>
-              )}
-            </div>
+          (messages.length !== 0 ? (
+            messages.map((message) => (
+              <div
+                key={message.id}
+                className={
+                  message.sender.id === accessData.id ? "text-right" : ""
+                }
+              >
+                {message.sender.id === accessData.id ? (
+                  <>
+                    <span
+                      className={`${
+                        message.body.length < 100
+                          ? "rounded-full inline-block"
+                          : "rounded-2xl block"
+                      } rounded-br-none bg-slate-500 p-2  text-right`}
+                    >
+                      {message.body}{" "}
+                    </span>
+                    <p className="text-xs italic ">
+                      {new Date(message.created_at).toLocaleTimeString()}
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <p
+                      className={`${
+                        message.body.length < 100
+                          ? "rounded-full inline-block"
+                          : " rounded-2xl block"
+                      } rounded-bl-none bg-slate-500 p-2  `}
+                    >
+                      {message.body}{" "}
+                    </p>
+                    <p className="text-xs italic">
+                      {new Date(message.created_at).toLocaleTimeString()}
+                    </p>{" "}
+                  </>
+                )}
+              </div>
+            ))
+          ) : (
+            <p>No messages yet.</p>
           ))}
         <div className="dummy" ref={dummy}></div>
       </div>

@@ -50,7 +50,10 @@ export function Channels({
             {channel.name}
           </h1>
         ))}
-      <button onClick={handleShowAddChannel}>
+      <button
+        onClick={handleShowAddChannel}
+        className="bg-slate-400 hover:bg-slate-600"
+      >
         {!showAddChannel ? "Add Channel" : "Close"}
       </button>
     </>

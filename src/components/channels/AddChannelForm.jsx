@@ -61,6 +61,7 @@ export function AddChannelForm({ users, onShowChannel }) {
         value={channelName}
         onChange={(e) => setChannelName(e.target.value)}
         placeholder="Channel name"
+        className="text-black"
       />
       <br />
       <h1>Added Users</h1>
@@ -75,6 +76,7 @@ export function AddChannelForm({ users, onShowChannel }) {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Search a user"
+        className="text-black"
       />
       <div
         style={{ maxHeight: "300px", overflow: "scroll", overflowX: "hidden" }}
