@@ -48,10 +48,14 @@ export function AddChannelMember({
         onChange={(e) => setQuery(e.target.value)}
       />
       {query.length > 3 &&
-        filteredUsers.map((user) => (
-          <p key={user.id} onClick={() => handleAddMember(user.uid, user.id)}>
-            {user.uid}
-          </p>
+        (filteredUsers.length < 50 ? (
+          filteredUsers.map((user) => (
+            <p key={user.id} onClick={() => handleAddMember(user.uid, user.id)}>
+              {user.uid}
+            </p>
+          ))
+        ) : (
+          <p>{filteredUsers.length} results found</p>
         ))}
     </div>
   );
