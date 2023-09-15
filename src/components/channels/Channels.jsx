@@ -33,7 +33,7 @@ export function Channels({
   }, [showAddChannel]);
 
   return (
-    <div style={{ display: "flex", flexDirection: "row" }}>
+    <div>
       <div>
         <h1>User Channels</h1>
         <button onClick={handleShowAddChannel}>

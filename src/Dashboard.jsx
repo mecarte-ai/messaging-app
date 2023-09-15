@@ -69,17 +69,19 @@ export function Dashboard() {
   }
 
   return (
-    <div style={{ display: "flex" }}>
-      <div style={{ backgroundColor: "yellow" }}>
-        Welcome, {accessData.uid}
-        <button
-          onClick={() => {
-            setIsLogin(false);
-            setAccessData(null);
-          }}
-        >
-          Logout
-        </button>
+    <div>
+      <div>
+        <div>
+          Welcome, {accessData.uid}
+          <button
+            onClick={() => {
+              setIsLogin(false);
+              setAccessData(null);
+            }}
+          >
+            Logout
+          </button>
+        </div>
         <div>
           <button
             onClick={() => setSelected("User")}
@@ -104,7 +106,7 @@ export function Dashboard() {
             />
           </div>
         ) : (
-          <div style={{ backgroundColor: "green" }}>
+          <div>
             {showAddChannel && (
               <AddChannelForm users={users} onShowChannel={setShowAddChannel} />
             )}
@@ -125,7 +127,7 @@ export function Dashboard() {
           />
         )}
         {selectedChannel && (
-          <div style={{ display: "flex", flexDirection: "row" }}>
+          <div>
             <ChannelMessageBox
               selectedChannel={selectedChannel}
               selectedChannelName={selectedChannelName}
