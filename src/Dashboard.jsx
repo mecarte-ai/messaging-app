@@ -7,6 +7,7 @@ import { Channels } from "./components/channels/Channels";
 import { AddChannelForm } from "./components/channels/AddChannelForm";
 import { SearchUserForm } from "./components/users/SearchUserForm";
 import { apiURL } from "./App";
+import { UsersList } from "./components/users/UsersList";
 
 export function Dashboard() {
   const { setIsLogin, accessData, setAccessData } = useAuth();
@@ -17,6 +18,7 @@ export function Dashboard() {
   const [selectedUserName, setSelectedUserName] = useState(null);
   const [selectedChannel, setSelectedChannel] = useState(null);
   const [selectedChannelName, setSelectedChannelName] = useState(null);
+  const [selected, setSelected] = useState("User");
 
   async function fetchUsers() {
     const response = await fetch(`${apiURL}/users`, {
@@ -78,25 +80,43 @@ export function Dashboard() {
         >
           Logout
         </button>
-        {users && <SearchUserForm onSearch={setQuery} query={query} />}
-        <UsersList
-          query={query}
-          filteredUsers={filteredUsers}
-          handleUserClick={handleUserClick}
-        />
-      </div>
-      <div style={{ backgroundColor: "green" }}>
-        <button onClick={handleShowAddChannel}>
-          {!showAddChannel ? "Add Channel" : "Close"}
-        </button>
-        {showAddChannel && (
-          <AddChannelForm users={users} onShowChannel={setShowAddChannel} />
+        <div>
+          <button
+            onClick={() => setSelected("User")}
+            disabled={selected === "User"}
+          >
+            Users
+          </button>
+          <button
+            onClick={() => setSelected("Channels")}
+            disabled={selected === "Channels"}
+          >
+            Channels
+          </button>
+        </div>
+        {selected === "User" ? (
+          <div>
+            {users && <SearchUserForm onSearch={setQuery} query={query} />}
+            <UsersList
+              query={query}
+              filteredUsers={filteredUsers}
+              handleUserClick={handleUserClick}
+            />
+          </div>
+        ) : (
+          <div style={{ backgroundColor: "green" }}>
+            {showAddChannel && (
+              <AddChannelForm users={users} onShowChannel={setShowAddChannel} />
+            )}
+            <Channels
+              showAddChannel={showAddChannel}
+              setSelectedChannel={handleChannelClick}
+              handleShowAddChannel={handleShowAddChannel}
+            />
+          </div>
         )}
-        <Channels
-          showAddChannel={showAddChannel}
-          setSelectedChannel={handleChannelClick}
-        />
       </div>
+
       <div>
         {selectedUser && (
           <UserMessageBox
@@ -116,30 +136,5 @@ export function Dashboard() {
         )}
       </div>
     </div>
-  );
-}
-
-function UsersList({ query, filteredUsers, handleUserClick }) {
-  return (
-    <>
-      {query.length > 3 ? (
-        filteredUsers.length < 25 ? (
-          filteredUsers.map((user) => (
-            <div
-              key={user.uid}
-              onClick={() => handleUserClick(user.id, user.uid)}
-              className="box"
-            >
-              <p>{user.id}</p>
-              <div>Hello {user.uid}</div>
-            </div>
-          ))
-        ) : (
-          <h1>{filteredUsers.length} results found</h1>
-        )
-      ) : (
-        <h1>Search a user</h1>
-      )}
-    </>
   );
 }

@@ -2,7 +2,11 @@ import { useAuth } from "../../AuthContext";
 import { useEffect, useState } from "react";
 import { apiURL } from "../../App";
 
-export function Channels({ showAddChannel, setSelectedChannel }) {
+export function Channels({
+  showAddChannel,
+  setSelectedChannel,
+  handleShowAddChannel,
+}) {
   const [channels, setChannels] = useState([]);
   const { accessData } = useAuth();
 
@@ -32,6 +36,9 @@ export function Channels({ showAddChannel, setSelectedChannel }) {
     <div style={{ display: "flex", flexDirection: "row" }}>
       <div>
         <h1>User Channels</h1>
+        <button onClick={handleShowAddChannel}>
+          {!showAddChannel ? "Add Channel" : "Close"}
+        </button>
         {channels &&
           channels.map((channel) => (
             <h1
