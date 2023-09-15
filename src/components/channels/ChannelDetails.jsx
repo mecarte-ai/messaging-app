@@ -1,6 +1,6 @@
-import { useAuth } from "../AuthContext";
+import { useAuth } from "../../AuthContext";
 import { useEffect, useState } from "react";
-import { apiURL } from "../App";
+import { apiURL } from "../../App";
 import { AddChannelMember } from "./AddChannelMember";
 
 export function ChannelDetails({ selectedChannel, users }) {

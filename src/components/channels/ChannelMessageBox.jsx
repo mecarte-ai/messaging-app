@@ -1,6 +1,6 @@
-import { useAuth } from "../AuthContext";
+import { useAuth } from "../../AuthContext";
 import { useEffect, useState } from "react";
-import { apiURL } from "../App";
+import { apiURL } from "../../App";
 import { ChannelSendMessageForm } from "./ChannelSendMessageForm";
 
 export function ChannelMessageBox({ selectedChannel, selectedChannelName }) {
@@ -49,7 +49,8 @@ export function ChannelMessageBox({ selectedChannel, selectedChannelName }) {
               message.sender.id === accessData.id ? { color: "white" } : {}
             }
           >
-            {message.sender.uid}: {message.body}
+            {message.sender.id === accessData.id ? "You" : message.sender.uid}:{" "}
+            {message.body}
           </p>
         ))}
       <ChannelSendMessageForm channel={selectedChannel} />

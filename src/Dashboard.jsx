@@ -1,11 +1,11 @@
 import { useAuth } from "./AuthContext";
 import { useEffect, useState } from "react";
-import { ChannelDetails } from "./components/ChannelDetails";
-import { UserMessageBox } from "./components/UserMessageBox";
-import { ChannelMessageBox } from "./components/ChannelMessageBox";
-import { Channels } from "./components/Channels";
-import { AddChannelForm } from "./components/AddChannelForm";
-import { SearchUserForm } from "./components/SearchUserForm";
+import { ChannelDetails } from "./components/channels/ChannelDetails";
+import { UserMessageBox } from "./components/users/UserMessageBox";
+import { ChannelMessageBox } from "./components/channels/ChannelMessageBox";
+import { Channels } from "./components/channels/Channels";
+import { AddChannelForm } from "./components/channels/AddChannelForm";
+import { SearchUserForm } from "./components/users/SearchUserForm";
 import { apiURL } from "./App";
 
 export function Dashboard() {
@@ -79,24 +79,11 @@ export function Dashboard() {
           Logout
         </button>
         {users && <SearchUserForm onSearch={setQuery} query={query} />}
-        {query.length > 3 ? (
-          filteredUsers.length < 75 ? (
-            filteredUsers.map((user) => (
-              <div
-                key={user.uid}
-                onClick={() => handleUserClick(user.id, user.uid)}
-                className="box"
-              >
-                <p>{user.id}</p>
-                <div>Hello {user.uid}</div>
-              </div>
-            ))
-          ) : (
-            <h1>Too many results {filteredUsers.length}</h1>
-          )
-        ) : (
-          <h1>Search a user</h1>
-        )}
+        <UsersList
+          query={query}
+          filteredUsers={filteredUsers}
+          handleUserClick={handleUserClick}
+        />
       </div>
       <div style={{ backgroundColor: "green" }}>
         <button onClick={handleShowAddChannel}>
@@ -129,5 +116,30 @@ export function Dashboard() {
         )}
       </div>
     </div>
+  );
+}
+
+function UsersList({ query, filteredUsers, handleUserClick }) {
+  return (
+    <>
+      {query.length > 3 ? (
+        filteredUsers.length < 25 ? (
+          filteredUsers.map((user) => (
+            <div
+              key={user.uid}
+              onClick={() => handleUserClick(user.id, user.uid)}
+              className="box"
+            >
+              <p>{user.id}</p>
+              <div>Hello {user.uid}</div>
+            </div>
+          ))
+        ) : (
+          <h1>{filteredUsers.length} results found</h1>
+        )
+      ) : (
+        <h1>Search a user</h1>
+      )}
+    </>
   );
 }

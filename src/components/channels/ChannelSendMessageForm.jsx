@@ -1,8 +1,8 @@
-import { useAuth } from "../AuthContext";
+import { useAuth } from "../../AuthContext";
 import { useState } from "react";
-import { apiURL } from "../App";
+import { apiURL } from "../../App";
 
-export function UserSendMessageForm({ user }) {
+export function ChannelSendMessageForm({ channel }) {
   const [message, setMessage] = useState("");
   const { accessData } = useAuth();
 
@@ -11,7 +11,7 @@ export function UserSendMessageForm({ user }) {
 
     const newMessage = {
       receiver_id: id,
-      receiver_class: "User",
+      receiver_class: "Channel",
       body: message,
     };
 
@@ -28,7 +28,7 @@ export function UserSendMessageForm({ user }) {
   }
 
   return (
-    <form action="" onSubmit={(e) => handleSend(e, user)}>
+    <form action="" onSubmit={(e) => handleSend(e, channel)}>
       <input
         type="text"
         name=""

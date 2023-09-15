@@ -1,6 +1,6 @@
-import { useAuth } from "../AuthContext";
+import { useAuth } from "../../AuthContext";
 import { useEffect, useState } from "react";
-import { apiURL } from "../App";
+import { apiURL } from "../../App";
 
 export function AddChannelForm({ users, onShowChannel }) {
   const [channelName, setChannelName] = useState("");
