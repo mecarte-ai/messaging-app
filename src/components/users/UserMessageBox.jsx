@@ -38,21 +38,23 @@ export function UserMessageBox({ selectedUser, selectedUserName }) {
   }, [selectedUser]);
 
   return (
-    <div style={{ backgroundColor: "blue" }}>
-      <h1>Hello {selectedUserName}!</h1>
-      <h3>Messages</h3>
-      {messages &&
-        messages.map((message) => (
-          <p
-            key={message.id}
-            style={
-              message.sender.id === accessData.id ? { color: "white" } : {}
-            }
-          >
-            {message.sender.id === accessData.id ? "You" : message.sender.uid}:{" "}
-            {message.body}
-          </p>
-        ))}
+    <div className="h-screen grid grid-rows-[auto_1fr_auto] p-3">
+      <h1>{selectedUserName.toUpperCase()}</h1>
+      <div className="">
+        <h3>Messages</h3>
+        {messages &&
+          messages.map((message) => (
+            <p
+              key={message.id}
+              style={
+                message.sender.id === accessData.id ? { color: "white" } : {}
+              }
+            >
+              {message.sender.id === accessData.id ? "You" : message.sender.uid}
+              : {message.body}
+            </p>
+          ))}
+      </div>
       <UserSendMessageForm user={selectedUser} />
     </div>
   );

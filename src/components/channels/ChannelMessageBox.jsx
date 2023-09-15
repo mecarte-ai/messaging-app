@@ -38,17 +38,12 @@ export function ChannelMessageBox({ selectedChannel, selectedChannelName }) {
   }, [selectedChannel]);
 
   return (
-    <div style={{ backgroundColor: "pink" }}>
+    <div>
       <h1>Welcome to {selectedChannelName}!</h1>
       <h3>Messages</h3>
       {messages &&
         messages.map((message) => (
-          <p
-            key={message.id}
-            style={
-              message.sender.id === accessData.id ? { color: "white" } : {}
-            }
-          >
+          <p key={message.id}>
             {message.sender.id === accessData.id ? "You" : message.sender.uid}:{" "}
             {message.body}
           </p>

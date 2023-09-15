@@ -6,6 +6,7 @@ export function SearchUserForm({ query, onSearch }) {
         type="text"
         value={query}
         onChange={(e) => onSearch(e.target.value)}
+        className=" text-black"
       />
     </div>
   );

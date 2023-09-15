@@ -1,6 +1,6 @@
 export function UsersList({ query, filteredUsers, handleUserClick }) {
   return (
-    <>
+    <div className="">
       {query.length > 3 ? (
         filteredUsers.length < 25 ? (
           filteredUsers.map((user) => (
@@ -10,7 +10,7 @@ export function UsersList({ query, filteredUsers, handleUserClick }) {
               className="box"
             >
               <p>{user.id}</p>
-              <div>Hello {user.uid}</div>
+              <div>{user.uid}</div>
             </div>
           ))
         ) : (
@@ -19,6 +19,6 @@ export function UsersList({ query, filteredUsers, handleUserClick }) {
       ) : (
         <h1>Search a user</h1>
       )}
-    </>
+    </div>
   );
 }

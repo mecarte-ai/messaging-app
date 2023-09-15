@@ -69,18 +69,12 @@ export function Dashboard() {
   }
 
   return (
-    <div>
-      <div>
+    <div className=" bg-slate-600 text-white grid grid-cols-[250px_1fr] h-screen">
+      <div className="bg-slate-500 h-screen grid grid-rows-[auto_auto_auto_1fr_auto] p-3  overflow-hidden">
         <div>
-          Welcome, {accessData.uid}
-          <button
-            onClick={() => {
-              setIsLogin(false);
-              setAccessData(null);
-            }}
-          >
-            Logout
-          </button>
+          <span className=" text-xl text-center block">
+            Welcome {accessData.uid}!
+          </span>
         </div>
         <div>
           <button
@@ -97,36 +91,49 @@ export function Dashboard() {
           </button>
         </div>
         {selected === "User" ? (
-          <div>
+          <>
             {users && <SearchUserForm onSearch={setQuery} query={query} />}
-            <UsersList
-              query={query}
-              filteredUsers={filteredUsers}
-              handleUserClick={handleUserClick}
-            />
-          </div>
+            <div className="overflow-y-auto overflow-x-hidden py-3">
+              <UsersList
+                query={query}
+                filteredUsers={filteredUsers}
+                handleUserClick={handleUserClick}
+              />
+            </div>
+          </>
         ) : (
           <div>
-            {showAddChannel && (
-              <AddChannelForm users={users} onShowChannel={setShowAddChannel} />
-            )}
             <Channels
               showAddChannel={showAddChannel}
               setSelectedChannel={handleChannelClick}
               handleShowAddChannel={handleShowAddChannel}
             />
+            {showAddChannel && (
+              <AddChannelForm users={users} onShowChannel={setShowAddChannel} />
+            )}
           </div>
         )}
+        <div>
+          <button
+            onClick={() => {
+              setIsLogin(false);
+              setAccessData(null);
+            }}
+            className="block w-full"
+          >
+            Logout
+          </button>
+        </div>
       </div>
 
-      <div>
-        {selectedUser && (
+      <div className="bg-slate-400 ">
+        {selected === "User" && selectedUser && (
           <UserMessageBox
             selectedUser={selectedUser}
             selectedUserName={selectedUserName}
           />
         )}
-        {selectedChannel && (
+        {selected === "Channels" && selectedChannel && (
           <div>
             <ChannelMessageBox
               selectedChannel={selectedChannel}
