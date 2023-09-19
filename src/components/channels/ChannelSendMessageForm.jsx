@@ -32,11 +32,11 @@ export function ChannelSendMessageForm({ channel }) {
       onSubmit={(e) => handleSend(e, channel)}
       className="mt-4 flex gap-2 p-5 py-0"
     >
-      <input
+      <textarea
         type="text"
         value={message}
         onChange={(e) => setMessage(e.target.value)}
-        className="grow text-black px-2"
+        className="grow text-black p-2 resize-none"
       />
       <button className="px-2 bg-slate-500 rounded-md hover:bg-slate-600">
         Send message

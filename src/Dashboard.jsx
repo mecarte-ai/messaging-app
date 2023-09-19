@@ -69,7 +69,10 @@ export function Dashboard() {
   }
 
   return (
-    <div className=" bg-slate-600 text-white grid grid-cols-[250px_1fr] h-screen">
+    <div
+      className=" bg-slate-600 text-white grid grid-cols-[250px_1fr] h-screen  font-sans"
+      style={{ overflowWrap: "anywhere" }}
+    >
       <div
         className={`bg-slate-500 h-screen grid ${
           selected === "User"
@@ -78,9 +81,9 @@ export function Dashboard() {
         } p-3 gap-3 overflow-hidden`}
       >
         <div>
-          <span className=" text-xl text-center block font-bold">
+          <p className="text-xl text-center block font-bold">
             Welcome {accessData.uid}!
-          </span>
+          </p>
         </div>
         <div className="flex">
           <button

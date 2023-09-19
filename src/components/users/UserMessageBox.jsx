@@ -73,7 +73,7 @@ export function UserMessageBox({ selectedUser, selectedUserName }) {
       <h1 className="p-5">{selectedUserName.toUpperCase()}</h1>
       <h3 className="text-center text-xl font-bold my-5">Messages</h3>
       <div
-        className="flex flex-col gap-4 overflow-y-auto p-5 pb-0"
+        className="flex flex-col gap-4 overflow-y-auto p-5 pb-0 whitespace-pre-line"
         ref={messageContainerRef}
       >
         {messages &&
@@ -86,36 +86,21 @@ export function UserMessageBox({ selectedUser, selectedUserName }) {
                 }
               >
                 {message.sender.id === accessData.id ? (
-                  <>
-                    <span
-                      className={`${
-                        message.body.length < 100
-                          ? "rounded-full inline-block"
-                          : "rounded-2xl block"
-                      } rounded-br-none bg-slate-500 p-2  text-right`}
-                    >
-                      {message.body}{" "}
-                    </span>
-                    <p className="text-xs italic ">
-                      {new Date(message.created_at).toLocaleString()}
-                    </p>
-                  </>
+                  <p
+                    className={`inline-block rounded-2xl rounded-br-none bg-slate-500 p-2  text-right`}
+                  >
+                    {message.body}
+                  </p>
                 ) : (
-                  <>
-                    <p
-                      className={`${
-                        message.body.length < 100
-                          ? "rounded-full inline-block"
-                          : " rounded-2xl block"
-                      } rounded-bl-none bg-slate-500 p-2  `}
-                    >
-                      {message.body}{" "}
-                    </p>
-                    <p className="text-xs italic">
-                      {new Date(message.created_at).toLocaleString()}
-                    </p>{" "}
-                  </>
+                  <p
+                    className={`rounded-2xl inline-block rounded-bl-none bg-slate-500 p-2  `}
+                  >
+                    {message.body}{" "}
+                  </p>
                 )}
+                <p className="text-xs italic ">
+                  {new Date(message.created_at).toLocaleString()}
+                </p>
               </div>
             ))
           ) : (

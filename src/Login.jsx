@@ -25,7 +25,7 @@ export default function Login() {
 
     const data = await res.json();
 
-    if (!data.success) {
+    if (data.success === false) {
       setError(data.errors[0]);
       setTimeout(() => {
         setError("");
