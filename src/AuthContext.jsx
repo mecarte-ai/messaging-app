@@ -6,20 +6,20 @@ export const useAuth = () => useContext(AuthContext);
 
 export function AuthProvider({ children }) {
   const [isLogin, setIsLogin] = useState(
-    localStorage.getItem("isLogin") === "true"
+    sessionStorage.getItem("isLogin") === "true"
   );
   const [accessData, setAccessData] = useState(
-    localStorage.getItem("token")
-      ? JSON.parse(localStorage.getItem("token"))
+    sessionStorage.getItem("token")
+      ? JSON.parse(sessionStorage.getItem("token"))
       : null
   );
 
   useEffect(() => {
-    localStorage.setItem("token", JSON.stringify(accessData));
+    sessionStorage.setItem("token", JSON.stringify(accessData));
   }, [accessData]);
 
   useEffect(() => {
-    localStorage.setItem("isLogin", isLogin.toString());
+    sessionStorage.setItem("isLogin", isLogin.toString());
   }, [isLogin]);
 
   return (
