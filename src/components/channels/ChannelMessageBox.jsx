@@ -97,7 +97,7 @@ export function ChannelMessageBox({ selectedChannel, selectedChannelName }) {
                       {message.body}{" "}
                     </span>
                     <p className="text-xs italic ">
-                      {new Date(message.created_at).toLocaleTimeString()}
+                      {new Date(message.created_at).toLocaleString()}
                     </p>
                   </>
                 ) : (
@@ -113,7 +113,7 @@ export function ChannelMessageBox({ selectedChannel, selectedChannelName }) {
                       {message.body}{" "}
                     </p>
                     <p className="text-xs italic">
-                      {new Date(message.created_at).toLocaleTimeString()}
+                      {new Date(message.created_at).toLocaleString()}
                     </p>{" "}
                   </>
                 )}
