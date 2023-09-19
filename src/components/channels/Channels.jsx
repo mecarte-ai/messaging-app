@@ -6,6 +6,7 @@ export function Channels({
   showAddChannel,
   setSelectedChannel,
   handleShowAddChannel,
+  selectedChannel,
 }) {
   const [channels, setChannels] = useState([]);
   const { accessData } = useAuth();
@@ -45,7 +46,11 @@ export function Channels({
           <h1
             key={channel.id}
             onClick={() => setSelectedChannel(channel.id, channel.name)}
-            className="box"
+            className={`${
+              selectedChannel === channel.id
+                ? "bg-slate-600 cursor-default"
+                : "cursor-pointer hover:bg-slate-400"
+            } `}
           >
             {channel.name}
           </h1>

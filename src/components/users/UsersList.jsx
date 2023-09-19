@@ -1,4 +1,9 @@
-export function UsersList({ query, filteredUsers, handleUserClick }) {
+export function UsersList({
+  query,
+  filteredUsers,
+  handleUserClick,
+  selectedUser,
+}) {
   return (
     <div className="flex gap-3 flex-col">
       {query.length > 3 ? (
@@ -7,7 +12,11 @@ export function UsersList({ query, filteredUsers, handleUserClick }) {
             <div
               key={user.uid}
               onClick={() => handleUserClick(user.id, user.uid)}
-              className="cursor-pointer hover:bg-slate-400"
+              className={`${
+                selectedUser === user.id
+                  ? "bg-slate-600 cursor-default"
+                  : "cursor-pointer hover:bg-slate-400"
+              } `}
             >
               <div>{user.uid}</div>
             </div>

@@ -86,22 +86,18 @@ export function Dashboard() {
           <button
             onClick={() => setSelected("User")}
             disabled={selected === "User"}
-            className={
-              selected === "User"
-                ? "grow bg-slate-400"
-                : "px-3 hover:bg-slate-600"
-            }
+            className={`flex-1 ${
+              selected === "User" ? "bg-slate-400" : "hover:bg-slate-600"
+            }`}
           >
             Users
           </button>
           <button
             onClick={() => setSelected("Channels")}
             disabled={selected === "Channels"}
-            className={
-              selected === "Channels"
-                ? "grow bg-slate-400"
-                : "px-3 hover:bg-slate-600"
-            }
+            className={`flex-1 ${
+              selected === "Channels" ? "bg-slate-400" : "hover:bg-slate-600"
+            }`}
           >
             Channels
           </button>
@@ -114,6 +110,7 @@ export function Dashboard() {
                 query={query}
                 filteredUsers={filteredUsers}
                 handleUserClick={handleUserClick}
+                selectedUser={selectedUser}
               />
             </div>
           </>
@@ -123,6 +120,7 @@ export function Dashboard() {
               showAddChannel={showAddChannel}
               setSelectedChannel={handleChannelClick}
               handleShowAddChannel={handleShowAddChannel}
+              selectedChannel={selectedChannel}
             />
             {showAddChannel && (
               <AddChannelForm users={users} onShowChannel={setShowAddChannel} />
