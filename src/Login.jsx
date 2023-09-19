@@ -9,6 +9,7 @@ export default function Login() {
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   async function handleLogin() {
     const res = await fetch(`${apiURL}/auth/sign_in`, {
@@ -22,27 +23,26 @@ export default function Login() {
       }),
     });
 
-    if (!res.ok) {
-      alert("Login not successful!");
-      return;
-    }
-
     const data = await res.json();
 
-    console.log(data);
+    if (!data.success) {
+      setError(data.errors[0]);
+    } else {
+      console.log(data);
 
-    let accessToken = await {
-      id: data.data.id,
-      "access-token": res.headers.get("access-token"),
-      client: res.headers.get("client"),
-      expiry: res.headers.get("expiry"),
-      uid: res.headers.get("uid"),
-    };
+      let accessToken = await {
+        id: data.data.id,
+        "access-token": res.headers.get("access-token"),
+        client: res.headers.get("client"),
+        expiry: res.headers.get("expiry"),
+        uid: res.headers.get("uid"),
+      };
 
-    console.log(accessToken);
+      console.log(accessToken);
 
-    setAccessData(accessToken);
-    setIsLogin(true);
+      setAccessData(accessToken);
+      setIsLogin(true);
+    }
   }
 
   function handleSubmit(e) {
@@ -81,7 +81,7 @@ export default function Login() {
                 required
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-slate-600 sm:text-sm sm:leading-6"
               />
             </div>
           </div>
@@ -104,7 +104,7 @@ export default function Login() {
                 onChange={(e) => setPassword(e.target.value)}
                 autoComplete="current-password"
                 required
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-slate-600 sm:text-sm sm:leading-6"
               />
             </div>
           </div>
@@ -112,10 +112,14 @@ export default function Login() {
           <div>
             <button
               type="submit"
-              className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              className="flex w-full justify-center rounded-md bg-slate-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-slate-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-600"
             >
               Sign in
             </button>
+          </div>
+
+          <div>
+            <p className="text-red-600 text-sm">{error}</p>
           </div>
         </form>
 
@@ -123,7 +127,7 @@ export default function Login() {
           Not a member?{" "}
           <Link
             to="/register"
-            className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
+            className="font-semibold leading-6 text-slate-600 hover:text-slate-500"
           >
             Register Here
           </Link>
