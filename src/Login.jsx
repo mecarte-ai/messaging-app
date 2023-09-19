@@ -27,6 +27,9 @@ export default function Login() {
 
     if (!data.success) {
       setError(data.errors[0]);
+      setTimeout(() => {
+        setError("");
+      }, 5000);
     } else {
       console.log(data);
 
