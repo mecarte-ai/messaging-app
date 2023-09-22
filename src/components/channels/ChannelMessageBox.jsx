@@ -30,6 +30,31 @@ export function ChannelMessageBox({ selectedChannel, selectedChannelName }) {
     fetchMessages(selectedChannel);
   };
 
+  function formatTimeAgo(timestamp) {
+    const currentDate = new Date();
+    const messageDate = new Date(timestamp);
+    const timeDifference = currentDate - messageDate;
+
+    if (timeDifference < 60000) {
+      return "Just now";
+    } else if (timeDifference < 3600000) {
+      const minutesAgo = Math.floor(timeDifference / 60000);
+      return `${minutesAgo} ${minutesAgo === 1 ? "minute" : "minutes"} ago`;
+    } else if (timeDifference < 86400000) {
+      const hoursAgo = Math.floor(timeDifference / 3600000);
+      return `${hoursAgo} ${hoursAgo === 1 ? "hour" : "hours"} ago`;
+    } else if (timeDifference < 2592000000) {
+      const daysAgo = Math.floor(timeDifference / 86400000);
+      return `${daysAgo} ${daysAgo === 1 ? "day" : "days"} ago`;
+    } else if (timeDifference < 31536000000) {
+      const monthsAgo = Math.floor(timeDifference / 2592000000);
+      return `${monthsAgo} ${monthsAgo === 1 ? "month" : "months"} ago`;
+    } else {
+      const yearsAgo = Math.floor(timeDifference / 31536000000);
+      return `${yearsAgo} ${yearsAgo === 1 ? "year" : "years"} ago`;
+    }
+  }
+
   useEffect(() => {
     fetchMessages(selectedChannel);
 
@@ -104,7 +129,7 @@ export function ChannelMessageBox({ selectedChannel, selectedChannelName }) {
                   </>
                 )}
                 <p className="text-xs italic">
-                  {new Date(message.created_at).toLocaleString()}
+                  {formatTimeAgo(message.created_at)}
                 </p>{" "}
               </div>
             ))
