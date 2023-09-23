@@ -120,7 +120,9 @@ export function AddChannelForm({ users, onShowChannel }) {
         </div>
         <div className="flex gap-2 justify-center">
           <button className="p-1">Submit</button>
-          <button className="p-1">Close</button>
+          <button className="p-1" onClick={() => onShowChannel(false)}>
+            Close
+          </button>
         </div>
       </form>
     </div>
