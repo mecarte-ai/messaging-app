@@ -70,7 +70,7 @@ export function Dashboard() {
 
   return (
     <div
-      className=" bg-slate-600 text-white grid grid-cols-[250px_1fr] h-screen  font-sans"
+      className=" bg-slate-600 text-white grid grid-cols-[250px_1fr] h-screen  font-sans relative"
       style={{ overflowWrap: "anywhere" }}
     >
       <div
