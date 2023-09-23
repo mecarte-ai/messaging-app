@@ -40,23 +40,30 @@ export function AddChannelMember({
   }
 
   return (
-    <div className="">
+    <div className="overflow-y-auto p-3 space-y-3">
       <input
         type="text"
         placeholder="Search a user"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
+        className="text-black block w-full"
       />
-      {query.length > 3 &&
-        (filteredUsers.length < 50 ? (
-          filteredUsers.map((user) => (
-            <p key={user.id} onClick={() => handleAddMember(user.uid, user.id)}>
-              {user.uid}
-            </p>
-          ))
-        ) : (
-          <p>{filteredUsers.length} results found</p>
-        ))}
+      <div className="flex gap-3 flex-col">
+        {query.length > 3 &&
+          (filteredUsers.length < 25 ? (
+            filteredUsers.map((user) => (
+              <p
+                key={user.id}
+                onClick={() => handleAddMember(user.uid, user.id)}
+                className="cursor-pointer hover:bg-slate-300"
+              >
+                {user.uid}
+              </p>
+            ))
+          ) : (
+            <p>{filteredUsers.length} results found</p>
+          ))}
+      </div>
     </div>
   );
 }

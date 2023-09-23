@@ -46,22 +46,27 @@ export function ChannelDetails({ selectedChannel, users }) {
   }, [selectedChannel]);
 
   return (
-    <div className="p-3 flex flex-col gap-3 overflow-hidden">
+    <div className="p-3 grid grid-rows-[auto_auto_1fr] gap-3 overflow-hidden h-screen">
       <h3 className="text-xl font-bold my-5">Channel members</h3>
-      {channelUsers &&
-        channelUsers.map((user) => (
-          <p key={user.id}>
-            {user.uid}
-            {channelDetails.data?.owner_id === user.id ? " (Owner)" : ""}
-            {accessData.id === user.id ? " (You)" : ""}
-          </p>
-        ))}
-      <button
-        onClick={() => setShowAddChannelMember((show) => !show)}
-        className="bg-slate-500 hover:bg-slate-600"
-      >
-        {showAddChannelMember ? "Close" : "Add member"}
-      </button>
+      <div className="flex gap-3 flex-col">
+        <div className="flex gap-2 flex-col">
+          {channelUsers &&
+            channelUsers.map((user) => (
+              <p key={user.id}>
+                {user.uid}
+                {channelDetails.data?.owner_id === user.id ? " (Owner)" : ""}
+                {accessData.id === user.id ? " (You)" : ""}
+              </p>
+            ))}
+        </div>
+        <button
+          onClick={() => setShowAddChannelMember((show) => !show)}
+          className="bg-slate-500 hover:bg-slate-600 w-full"
+        >
+          {showAddChannelMember ? "Close" : "Add member"}
+        </button>
+      </div>
+
       {showAddChannelMember && (
         <AddChannelMember
           users={nonChannelUsers}
